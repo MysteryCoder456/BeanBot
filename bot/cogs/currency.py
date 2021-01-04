@@ -43,7 +43,7 @@ class Currency(commands.Cog):
 
         if amount > current_amount:
             amount_needed = amount - current_amount
-            ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
+            await ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
             return
 
         UserData.add_data(ctx.author, "wallet", -amount)
