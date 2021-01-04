@@ -12,7 +12,7 @@ class Currency(commands.Cog):
         if str(user.id) not in UserData.user_data:
             UserData.create_new_data(user)
 
-    @commands.command(name="balance", aliases=["bal", "b"], description="Check how many beans someone has")
+    @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has", brief="Check your beans")
     async def balance(self, ctx, user: discord.User = None):
         if user is None:
             user = ctx.author
@@ -27,7 +27,7 @@ class Currency(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="pay", aliases=["p"], description="Give beans to somebody")
+    @commands.command(name="pay", aliases=["p"], help="Give beans to somebody", brief="Give beans to somebody")
     async def pay(self, ctx, user: discord.User, amount: int):
         if amount == 0:
             await ctx.send("Why are you using this command if you aren't giving them money?")
