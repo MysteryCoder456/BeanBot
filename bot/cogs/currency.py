@@ -13,7 +13,7 @@ class Currency(commands.Cog):
             UserData.create_new_data(user)
 
     @commands.command(name="balance", aliases=["bal", "b"], description="Check how many beans someone has")
-    async def balance(self, ctx, user: discord.User=None):
+    async def balance(self, ctx, user: discord.User = None):
         if user is None:
             user = ctx.author
 
@@ -38,6 +38,13 @@ class Currency(commands.Cog):
 
         self.check_user_entry(ctx.author)
         self.check_user_entry(user)
+
+        current_amount = UserData.get_data(ctx.author, "wallet")
+
+        if amount > current_amount:
+            amount_needed = amount - current_amount
+            ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
+            return
 
         UserData.add_data(ctx.author, "wallet", -amount)
         UserData.add_data(user, "wallet", amount)
