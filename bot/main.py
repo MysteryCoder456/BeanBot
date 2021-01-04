@@ -6,12 +6,14 @@ from discord.ext import commands
 from data import UserData
 
 from cogs.currency import Currency
+from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
 PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and currency bot.")
 
 bot.add_cog(Currency(bot))
+bot.add_cog(Owner(bot))
 
 
 async def update_presence():
