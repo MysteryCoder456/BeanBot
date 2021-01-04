@@ -21,7 +21,8 @@ class UserData:
         data_entry = {
             "wallet": 100,
             "bank": 0,
-            "job_id": None
+            "job_id": None,
+            "job_streak": 0
         }
         cls.user_data[str(user.id)] = data_entry
         print(f"Created data entry for {user}")

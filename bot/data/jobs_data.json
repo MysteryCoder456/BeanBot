@@ -1,10 +1,17 @@
 [
     {
         "name": "Bean Collector",
-        "salary": 5
+        "salary": 5,
+        "streak_requirement": 0
     },
     {
         "name": "Bean Factory Worker",
-        "salary": 20
+        "salary": 20,
+        "streak_requirement": 5
+    },
+    {
+        "name": "Bean Rights Activist",
+        "salary": 40,
+        "streak_requirement": 20
     }
 ]

@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 import discord
 from discord.ext import commands
 
@@ -9,6 +10,8 @@ class Jobs(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
+        self.worked_today = {}
+        self.date = datetime.now().day
 
         with open("bot/data/jobs_data.json", "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
@@ -16,6 +19,21 @@ class Jobs(commands.Cog):
     def check_user_entry(self, user):
         if str(user.id) not in UserData.user_data:
             UserData.create_new_data(user)
+
+        if str(user.id) not in self.worked_today:
+            self.worked_today[str(user.id)] = False
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Member):
+        current_date = datetime.now().day
+
+        if current_date > self.date:
+            print("Resetting worked today flags for all users...")
+
+            for key in self.worked_today:
+                self.worked_today[key] = False
+
+            self.date = current_date
 
     @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")
     async def myjob(self, ctx):
@@ -44,7 +62,8 @@ class Jobs(commands.Cog):
         for job in self.jobs_data:
             job_name = job["name"]
             job_salary = job["salary"]
-            jobs_embed.add_field(name=job_name, value=f"Salary: {job_salary}")
+            job_requirement = job["streak_requirement"]
+            jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
 
         await ctx.send(embed=jobs_embed)
 
@@ -69,3 +88,26 @@ class Jobs(commands.Cog):
         embed.add_field(name="You will earn", value=f"{js} beans per hour")
 
         await ctx.send(embed=embed)
+
+    @commands.command(name="work", aliases=["w"], help="Go to work and earn beans. Usable once per day", brief="Earn some beans")
+    async def work(self, ctx):
+        self.check_user_entry(ctx.author)
+
+        if self.worked_today[str(ctx.author.id)]:
+            await ctx.send("You've done enough work for today, give yourself a break...")
+            return
+
+        job_id = UserData.get_data(ctx.author, "job_id")
+
+        if job_id is None:
+            await ctx.send("You're unemployed bro. Get a job...")
+            return
+
+        salary = self.jobs_data[job_id]["salary"]
+        UserData.add_data(ctx.author, "wallet", salary)
+
+        self.worked_today[str(ctx.author.id)] = True
+        UserData.add_data(ctx.author, "job_streak", 1)
+        job_streak = UserData.get_data(ctx.author, "job_streak")
+
+        await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{job_streak} day** streak!")
