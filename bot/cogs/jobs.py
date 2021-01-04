@@ -73,15 +73,23 @@ class Jobs(commands.Cog):
 
         jn = None
         js = None
+        jr = None
+        current_streak = UserData.get_data(ctx.author, "job_streak")
 
         for (job_id, job) in enumerate(self.jobs_data):
             if job["name"].lower() == job_name.lower():
-                UserData.set_data(ctx.author, "job_id", job_id)
                 jn = job["name"]
                 js = job["salary"]
+                jr = job["streak_requirement"]
+
+                if current_streak < jr:
+                    await ctx.send(f"You need a **{jr} day** streak to get this job! You're currently on a **{current_streak} day** streak.")
+                    return
+
+                UserData.set_data(ctx.author, "job_id", job_id)
                 break
 
-        if jn is None or js is None:
+        if jn is None or js is None or jr is None:
             return
 
         embed = discord.Embed(title=f"You have become a {jn}!", color=self.theme_color)
