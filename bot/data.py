@@ -17,9 +17,23 @@ class UserData:
             await asyncio.sleep(10)
 
     @classmethod
-    def create_new_data(cls):
+    def create_new_data(cls, user):
         data_entry = {
             "wallet": 100,
             "bank": 0
         }
-        return data_entry
+        cls.user_data[str(user.id)] = data_entry
+        print(f"Created data entry for {user}")
+
+    @classmethod
+    def set_data(cls, user, key, value):
+        cls.user_data[str(user.id)][key] = value
+
+    @classmethod
+    def get_data(cls, user, key):
+        return cls.user_data[str(user.id)][key]
+
+    @classmethod
+    def add_data(cls, user, key, amount):
+        if isinstance(cls.user_data[str(user.id)][key], int):
+            cls.user_data[str(user.id)][key] += amount

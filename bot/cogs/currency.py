@@ -8,18 +8,18 @@ class Currency(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def check_user_entry(self, user_id):
-        if user_id not in UserData.user_data:
-            UserData.user_data[user_id] = UserData.create_new_data()
+    def check_user_entry(self, user):
+        if str(user.id) not in UserData.user_data:
+            UserData.create_new_data(user)
 
     @commands.command(name="balance", aliases=["bal", "b"], description="Check how many beans someone has")
     async def balance(self, ctx, user: discord.User=None):
         if user is None:
             user = ctx.author
 
-        self.check_user_entry(user.id)
-        wallet = UserData.user_data[user.id]["wallet"]
-        bank = UserData.user_data[user.id]["bank"]
+        self.check_user_entry(user)
+        wallet = UserData.get_data(user, "wallet")
+        bank = UserData.get_data(user, "bank")
 
         embed = discord.Embed(title=f"{user.display_name}'s Bean Balance")
         embed.add_field(name="Wallet", value=f"{wallet} beans")
@@ -27,12 +27,19 @@ class Currency(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="pay", description="Give beans to somebody")
-    async def pay(self, ctx, user: discord.User, amount):
-        self.check_user_entry(ctx.author.id)
-        self.check_user_entry(user.id)
+    @commands.command(name="pay", aliases=["p"], description="Give beans to somebody")
+    async def pay(self, ctx, user: discord.User, amount: int):
+        if amount == 0:
+            await ctx.send("Why are you using this command if you aren't giving them money?")
+            return
+        elif amount < 1:
+            await ctx.send("You can't trick me into taking away their money fool!")
+            return
 
-        UserData.user_data[ctx.author.id]["wallet"] -= int(amount)
-        UserData.user_data[user.id]["wallet"] += int(amount)
+        self.check_user_entry(ctx.author)
+        self.check_user_entry(user)
+
+        UserData.add_data(ctx.author, "wallet", -amount)
+        UserData.add_data(user, "wallet", amount)
 
         await ctx.send(f"You paid {amount} beans to {user.display_name}.")
