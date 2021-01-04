@@ -3,7 +3,7 @@ import json
 
 
 class UserData:
-    filename = "bot/user_data.json"
+    filename = "bot/data/user_data.json"
     with open(filename, "r") as data_file:
         user_data = json.load(data_file)
 
@@ -20,7 +20,8 @@ class UserData:
     def create_new_data(cls, user):
         data_entry = {
             "wallet": 100,
-            "bank": 0
+            "bank": 0,
+            "job_id": None
         }
         cls.user_data[str(user.id)] = data_entry
         print(f"Created data entry for {user}")

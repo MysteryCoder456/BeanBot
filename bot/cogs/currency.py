@@ -5,23 +5,22 @@ from data import UserData
 
 
 class Currency(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, theme_color):
         self.bot = bot
+        self.theme_color = theme_color
 
     def check_user_entry(self, user):
         if str(user.id) not in UserData.user_data:
             UserData.create_new_data(user)
 
     @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has", brief="Check your beans")
-    async def balance(self, ctx, user: discord.User = None):
-        if user is None:
-            user = ctx.author
+    async def balance(self, ctx):
+        self.check_user_entry(ctx.author)
 
-        self.check_user_entry(user)
-        wallet = UserData.get_data(user, "wallet")
-        bank = UserData.get_data(user, "bank")
+        wallet = UserData.get_data(ctx.author, "wallet")
+        bank = UserData.get_data(ctx.author, "bank")
 
-        embed = discord.Embed(title=f"{user.display_name}'s Bean Balance")
+        embed = discord.Embed(title=f"{ctx.author.display_name}'s Bean Balance", color=self.theme_color)
         embed.add_field(name="Wallet", value=f"{wallet} beans")
         embed.add_field(name="Bank", value=f"{bank} beans")
 

@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Bean Collector",
+        "salary": 5
+    },
+    {
+        "name": "Bean Factory Worker",
+        "salary": 20
+    }
+]
