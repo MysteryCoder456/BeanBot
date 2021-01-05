@@ -16,14 +16,15 @@ class Currency(commands.Cog):
 
         UserData.check_user_entry(user)
 
-        UserData.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": user.id})
+        UserData.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": user.id})
         data = UserData.c.fetchone()
         wallet = data[0]
         bank = data[1]
+        bank_capacity = data[2]
 
         embed = discord.Embed(title=f"{user.display_name}'s Bean Balance", color=self.theme_color)
         embed.add_field(name="Wallet", value=f"{wallet} beans")
-        embed.add_field(name="Bank", value=f"{bank} beans")
+        embed.add_field(name="Bank", value=f"{bank}/{bank_capacity} beans")
 
         await ctx.send(embed=embed)
 
@@ -77,13 +78,18 @@ class Currency(commands.Cog):
         UserData.check_user_entry(ctx.author)
 
         # Get current wallet and banks balances
-        UserData.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        UserData.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
         data = UserData.c.fetchone()
         wallet_amount = data[0]
         bank_amount = data[1]
+        bank_capacity = data[2]
 
         if str(amount) == "all":
             amount = wallet_amount
+
+            if bank_amount + amount > bank_capacity:
+                amount = bank_capacity - bank_amount
+
         else:
             amount = int(amount)
 
@@ -99,6 +105,12 @@ class Currency(commands.Cog):
                 amount_needed = amount - wallet_amount
                 await ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
                 return
+
+            if bank_amount + amount > bank_capacity:
+                await ctx.send("You don't have enough space in your bank for that.")
+                return
+
+            # Ensure user doesn't go over the capacity
 
         # Update balances
         UserData.c.execute(

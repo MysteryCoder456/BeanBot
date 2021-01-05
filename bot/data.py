@@ -8,7 +8,7 @@ class UserData:
 
     @classmethod
     def create_tables(cls):
-        cls.c.execute("CREATE TABLE IF NOT EXISTS users (id INT, wallet INT, bank INT, job_id INT, job_streak INT, worked_today BOOL)")
+        cls.c.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, wallet INTEGER, bank INTEGER, bank_capacity, job_id INTEGER, job_streak INTEGER, worked_today BOOL)")
         cls.conn.commit()
 
     @classmethod
