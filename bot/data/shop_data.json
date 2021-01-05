@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Bank Storage",
+        "description": "Increase your bank capacity by 500.",
+        "price": 200
+    },
+    {
+        "name": "Bean Sculpture",
+        "description": "A sculpture of everyone's favourite food. Just a flex item...",
+        "price": 500
+    }
+]

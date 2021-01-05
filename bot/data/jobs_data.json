@@ -6,17 +6,17 @@
     },
     {
         "name": "Bean Collector",
-        "salary": 5,
+        "salary": 10,
         "streak_requirement": 0
     },
     {
         "name": "Bean Factory Worker",
-        "salary": 20,
+        "salary": 25,
         "streak_requirement": 5
     },
     {
         "name": "Bean Rights Activist",
-        "salary": 40,
+        "salary": 50,
         "streak_requirement": 20
     }
 ]

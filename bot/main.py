@@ -7,6 +7,7 @@ from data import UserData
 
 from cogs.currency import Currency
 from cogs.jobs import Jobs
+from cogs.shop import Shop
 from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
@@ -16,6 +17,7 @@ bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy 
 
 bot.add_cog(Currency(bot, THEME))
 bot.add_cog(Jobs(bot, THEME))
+bot.add_cog(Shop(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
 
