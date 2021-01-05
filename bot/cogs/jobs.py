@@ -10,18 +10,10 @@ class Jobs(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
-        self.worked_today = {}
         self.date = datetime.now().day
 
         with open("bot/data/jobs_data.json", "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
-
-    def check_user_entry(self, user):
-        if str(user.id) not in UserData.user_data:
-            UserData.create_new_data(user)
-
-        if str(user.id) not in self.worked_today:
-            self.worked_today[str(user.id)] = False
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Member):
@@ -29,19 +21,19 @@ class Jobs(commands.Cog):
 
         if current_date > self.date:
             print("Resetting worked today flags for all users...")
-
-            for key in self.worked_today:
-                self.worked_today[key] = False
-
+            UserData.c.execute("UPDATE users SET worked_today = 0")
+            UserData.conn.commit()
             self.date = current_date
 
     @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")
     async def myjob(self, ctx):
-        self.check_user_entry(ctx.author)
+        UserData.check_user_entry(ctx.author)
 
-        job_id = UserData.get_data(ctx.author, "job_id")
+        # Get the user's job_id
+        UserData.c.execute("SELECT job_id FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        job_id = UserData.c.fetchone()[0]
 
-        if job_id is None:
+        if job_id == 0:
             await ctx.send("You're unemployed bro. Get a job...")
             return
 
@@ -60,21 +52,25 @@ class Jobs(commands.Cog):
         jobs_embed = discord.Embed(title="Available Jobs", color=self.theme_color)
 
         for job in self.jobs_data:
-            job_name = job["name"]
-            job_salary = job["salary"]
-            job_requirement = job["streak_requirement"]
-            jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
+            if self.jobs_data.index(job) > 0:
+                job_name = job["name"]
+                job_salary = job["salary"]
+                job_requirement = job["streak_requirement"]
+                jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
 
         await ctx.send(embed=jobs_embed)
 
     @commands.command(name="takejob", aliases=["tj"], help="Take up an available job", brief="Take up a job")
     async def takejob(self, ctx, *, job_name: str):
-        self.check_user_entry(ctx.author)
+        UserData.check_user_entry(ctx.author)
 
         jn = None
         js = None
         jr = None
-        current_streak = UserData.get_data(ctx.author, "job_streak")
+
+        # Get current work streak
+        UserData.c.execute("SELECT job_streak FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        current_streak = UserData.c.fetchone()[0]
 
         for (job_id, job) in enumerate(self.jobs_data):
             if job["name"].lower() == job_name.lower():
@@ -86,7 +82,9 @@ class Jobs(commands.Cog):
                     await ctx.send(f"You need a **{jr} day** streak to get this job! You're currently on a **{current_streak} day** streak.")
                     return
 
-                UserData.set_data(ctx.author, "job_id", job_id)
+                # Set user's job_id to specified job
+                UserData.c.execute("UPDATE users SET job_id = :job_id WHERE id = :user_id", {"job_id": job_id, "user_id": ctx.author.id})
+                UserData.conn.commit()
                 break
 
         if jn is None or js is None or jr is None:
@@ -99,23 +97,36 @@ class Jobs(commands.Cog):
 
     @commands.command(name="work", aliases=["w"], help="Go to work and earn beans. Usable once per day", brief="Earn some beans")
     async def work(self, ctx):
-        self.check_user_entry(ctx.author)
+        UserData.check_user_entry(ctx.author)
 
-        if self.worked_today[str(ctx.author.id)]:
+        UserData.c.execute("SELECT wallet, job_id, job_streak, worked_today FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = UserData.c.fetchone()
+
+        current_balance = data[0]
+        job_id = data[1]
+        current_streak = data[2]
+        worked_today = bool(data[3])
+
+        # Check if the user worked today
+        if worked_today:
             await ctx.send("You've done enough work for today, give yourself a break...")
             return
 
-        job_id = UserData.get_data(ctx.author, "job_id")
-
-        if job_id is None:
+        if job_id == 0:
             await ctx.send("You're unemployed bro. Get a job...")
             return
 
         salary = self.jobs_data[job_id]["salary"]
-        UserData.add_data(ctx.author, "wallet", salary)
+        new_streak = current_streak + 1
 
-        self.worked_today[str(ctx.author.id)] = True
-        UserData.add_data(ctx.author, "job_streak", 1)
-        job_streak = UserData.get_data(ctx.author, "job_streak")
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_amount, job_streak = :new_streak, worked_today = 1 WHERE id = :user_id",
+            {
+                "new_amount": current_balance + salary,
+                "new_streak": new_streak,
+                "user_id": ctx.author.id
+            }
+        )
+        UserData.conn.commit()
 
-        await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{job_streak} day** streak!")
+        await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{new_streak} day** streak!")

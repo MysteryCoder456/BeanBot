@@ -29,7 +29,7 @@ async def update_presence():
 
 @bot.event
 async def on_ready():
-    bot.loop.create_task(UserData.auto_update_data())
+    UserData.create_tables()
     bot.loop.create_task(update_presence())
     print(f"Bot logged into {len(bot.guilds)} servers.")
 

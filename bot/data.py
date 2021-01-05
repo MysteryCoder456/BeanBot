@@ -1,41 +1,26 @@
-import asyncio
-import json
+import sqlite3
 
 
 class UserData:
-    filename = "bot/data/user_data.json"
-    with open(filename, "r") as data_file:
-        user_data = json.load(data_file)
+    filename = "bot/data/data.db"
+    conn = sqlite3.connect(filename)
+    c = conn.cursor()
 
     @classmethod
-    async def auto_update_data(cls):
-        while True:
-            # erase file and dump data
-            with open(cls.filename, "w") as data_file:
-                json.dump(cls.user_data, data_file)
-
-            await asyncio.sleep(10)
+    def create_tables(cls):
+        cls.c.execute("CREATE TABLE IF NOT EXISTS users (id INT, wallet INT, bank INT, job_id INT, job_streak INT, worked_today BOOL)")
+        cls.conn.commit()
 
     @classmethod
     def create_new_data(cls, user):
-        data_entry = {
-            "wallet": 100,
-            "bank": 0,
-            "job_id": None,
-            "job_streak": 0
-        }
-        cls.user_data[str(user.id)] = data_entry
+        cls.c.execute("INSERT INTO users VALUES (:user_id, 100, 0, 0, 0, 0)", {"user_id": user.id})
+        cls.conn.commit()
         print(f"Created data entry for {user}")
 
     @classmethod
-    def set_data(cls, user, key, value):
-        cls.user_data[str(user.id)][key] = value
+    def check_user_entry(cls, user):
+        cls.c.execute("SELECT * FROM users WHERE id = :user_id", {"user_id": user.id})
+        user_data = cls.c.fetchone()
 
-    @classmethod
-    def get_data(cls, user, key):
-        return cls.user_data[str(user.id)][key]
-
-    @classmethod
-    def add_data(cls, user, key, amount):
-        if isinstance(cls.user_data[str(user.id)][key], int):
-            cls.user_data[str(user.id)][key] += amount
+        if user_data is None:
+            cls.create_new_data(user)
