@@ -6,7 +6,7 @@ from discord.ext import commands
 from data import UserData
 
 from cogs.currency import Currency
-# from cogs.jobs import Jobs
+from cogs.jobs import Jobs
 from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
@@ -15,7 +15,7 @@ PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
 
 bot.add_cog(Currency(bot, THEME))
-# bot.add_cog(Jobs(bot, THEME))
+bot.add_cog(Jobs(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
 
