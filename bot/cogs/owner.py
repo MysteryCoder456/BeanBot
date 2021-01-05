@@ -7,9 +7,9 @@ class Owner(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
 
-    @commands.command(name="data")
+    @commands.command(name="db")
     @commands.is_owner()
-    async def data(self, ctx):
-        with open("bot/data/user_data.json", "r") as data_file:
+    async def db(self, ctx):
+        with open("bot/data/data.db", "r") as data_file:
             discord_file = discord.File(data_file)
             await ctx.author.send(file=discord_file)
