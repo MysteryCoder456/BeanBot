@@ -91,7 +91,7 @@ class Currency(commands.Cog):
                 await ctx.send("Why are you using this command if you aren't depositing anything?")
                 return
             elif amount < 1:
-                await ctx.send("Theres a command for withdrawing as well, you know...")
+                await ctx.send("There's a command for withdrawing as well, you know...")
                 return
 
             # Ensure user has enough to deposit
@@ -111,5 +111,44 @@ class Currency(commands.Cog):
         )
 
         UserData.conn.commit()
-
         await ctx.send(f"You deposited **{amount} beans** to your bank.")
+
+    @commands.command(name="withdraw", aliases=["with"], help="Withdraw beans from your bank when you want to use them", brief="Withdraw beans from bank")
+    async def withdraw(self, ctx, amount):
+        UserData.check_user_entry(ctx.author)
+
+        # Get current wallet and banks balances
+        UserData.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = UserData.c.fetchone()
+        wallet_amount = data[0]
+        bank_amount = data[1]
+
+        if str(amount) == "all":
+            amount = bank_amount
+        else:
+            amount = int(amount)
+
+            if amount == 0:
+                await ctx.send("Why are you using this command if you aren't withdrawing anything?")
+                return
+            elif amount < 1:
+                await ctx.send("There's a command for depositing as well, you know...")
+                return
+
+            # Ensure user has enough to deposit
+            if amount > bank_amount:
+                await ctx.send("You don't have that many beans in your bank.")
+                return
+
+        # Update balances
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_wallet_amount, bank = :new_bank_amount WHERE id = :user_id",
+            {
+                "new_wallet_amount": wallet_amount + amount,
+                "new_bank_amount": bank_amount - amount,
+                "user_id": ctx.author.id
+            }
+        )
+
+        UserData.conn.commit()
+        await ctx.send(f"You withdrew **{amount} beans** from your bank.")
