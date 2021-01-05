@@ -9,18 +9,19 @@ class Currency(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
 
-    def check_user_entry(self, user):
-        if str(user.id) not in UserData.user_data:
-            UserData.create_new_data(user)
-
     @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has", brief="Check your beans")
-    async def balance(self, ctx):
-        self.check_user_entry(ctx.author)
+    async def balance(self, ctx, user: discord.User=None):
+        if user is None:
+            user = ctx.author
 
-        wallet = UserData.get_data(ctx.author, "wallet")
-        bank = UserData.get_data(ctx.author, "bank")
+        UserData.check_user_entry(user)
 
-        embed = discord.Embed(title=f"{ctx.author.display_name}'s Bean Balance", color=self.theme_color)
+        UserData.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": user.id})
+        data = UserData.c.fetchone()
+        wallet = data[0]
+        bank = data[1]
+
+        embed = discord.Embed(title=f"{user.display_name}'s Bean Balance", color=self.theme_color)
         embed.add_field(name="Wallet", value=f"{wallet} beans")
         embed.add_field(name="Bank", value=f"{bank} beans")
 
@@ -35,17 +36,38 @@ class Currency(commands.Cog):
             await ctx.send("You can't trick me into taking away their money fool!")
             return
 
-        self.check_user_entry(ctx.author)
-        self.check_user_entry(user)
+        UserData.check_user_entry(ctx.author)
+        UserData.check_user_entry(user)
 
-        current_amount = UserData.get_data(ctx.author, "wallet")
+        # Get current wallet balances
+        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        current_balance = UserData.c.fetchone()[0]
 
-        if amount > current_amount:
-            amount_needed = amount - current_amount
+        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
+        current_reciever_balance = UserData.c.fetchone()[0]
+
+        # Ensure user has enough to pay
+        if amount > current_balance:
+            amount_needed = amount - current_balance
             await ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
             return
 
-        UserData.add_data(ctx.author, "wallet", -amount)
-        UserData.add_data(user, "wallet", amount)
+        # Update balances
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
+            {
+                "new_amount": current_balance - amount,
+                "user_id": ctx.author.id
+            }
+        )
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
+            {
+                "new_amount": current_reciever_balance + amount,
+                "user_id": user.id
+            }
+        )
+
+        UserData.conn.commit()
 
         await ctx.send(f"You paid {amount} beans to {user.display_name}.")

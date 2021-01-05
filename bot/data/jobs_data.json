@@ -1,5 +1,10 @@
 [
     {
+        "name": "Unemployed",
+        "salary": 0,
+        "streak_requirement": 0
+    },
+    {
         "name": "Bean Collector",
         "salary": 5,
         "streak_requirement": 0

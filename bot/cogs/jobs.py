@@ -10,18 +10,10 @@ class Jobs(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
-        self.worked_today = {}
         self.date = datetime.now().day
 
         with open("bot/data/jobs_data.json", "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
-
-    def check_user_entry(self, user):
-        if str(user.id) not in UserData.user_data:
-            UserData.create_new_data(user)
-
-        if str(user.id) not in self.worked_today:
-            self.worked_today[str(user.id)] = False
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Member):
@@ -60,10 +52,11 @@ class Jobs(commands.Cog):
         jobs_embed = discord.Embed(title="Available Jobs", color=self.theme_color)
 
         for job in self.jobs_data:
-            job_name = job["name"]
-            job_salary = job["salary"]
-            job_requirement = job["streak_requirement"]
-            jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
+            if self.jobs_data.keys().index(job) > 0:
+                job_name = job["name"]
+                job_salary = job["salary"]
+                job_requirement = job["streak_requirement"]
+                jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
 
         await ctx.send(embed=jobs_embed)
 

@@ -6,7 +6,7 @@ from discord.ext import commands
 from data import UserData
 
 from cogs.currency import Currency
-from cogs.jobs import Jobs
+# from cogs.jobs import Jobs
 from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
@@ -15,7 +15,7 @@ PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
 
 bot.add_cog(Currency(bot, THEME))
-bot.add_cog(Jobs(bot, THEME))
+# bot.add_cog(Jobs(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
 
@@ -29,7 +29,7 @@ async def update_presence():
 
 @bot.event
 async def on_ready():
-    bot.loop.create_task(UserData.auto_update_data())
+    UserData.create_tables()
     bot.loop.create_task(update_presence())
     print(f"Bot logged into {len(bot.guilds)} servers.")
 
