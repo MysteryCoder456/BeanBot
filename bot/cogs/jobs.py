@@ -21,7 +21,10 @@ class Jobs(commands.Cog):
 
         if current_date > self.date:
             print("Resetting worked today flags for all users...")
+
+            UserData.c.execute("UPDATE users SET worked_yesterday = worked_today")
             UserData.c.execute("UPDATE users SET worked_today = 0")
+
             UserData.conn.commit()
             self.date = current_date
 
@@ -99,13 +102,14 @@ class Jobs(commands.Cog):
     async def work(self, ctx):
         UserData.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT wallet, job_id, job_streak, worked_today FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        UserData.c.execute("SELECT wallet, job_id, job_streak, worked_today, worked_yesterday FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
         data = UserData.c.fetchone()
 
         current_balance = data[0]
         job_id = data[1]
         current_streak = data[2]
         worked_today = bool(data[3])
+        worked_yesterday = bool(data[4])
 
         # Check if the user worked today
         if worked_today:
@@ -127,6 +131,10 @@ class Jobs(commands.Cog):
                 "user_id": ctx.author.id
             }
         )
-        UserData.conn.commit()
 
+        if not worked_yesterday:
+            UserData.c.execute("UPDATE users SET job_streak = 0 WHERE id = :user_id", {"user_id": ctx.author.id})
+            await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
+
+        UserData.conn.commit()
         await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{new_streak} day** streak!")
