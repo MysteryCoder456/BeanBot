@@ -8,7 +8,16 @@ class UserData:
 
     @classmethod
     def create_tables(cls):
-        cls.c.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, wallet INTEGER, bank INTEGER, bank_capacity INTEGER, job_id INTEGER, job_streak INTEGER, worked_today BOOL, inventory TEXT)")
+        cls.c.execute("""CREATE TABLE IF NOT EXISTS "users" (
+            "id"	INTEGER,
+            "wallet"	INTEGER DEFAULT 100,
+            "bank"	INTEGER DEFAULT 0,
+            "bank_capacity"	INTEGER DEFAULT 500,
+            "job_id"	INTEGER DEFAULT 0,
+            "job_streak"	INTEGER DEFAULT 0,
+            "worked_today"	BOOL DEFAULT 0,
+            "inventory"	TEXT DEFAULT '[]'
+        )""")
         cls.conn.commit()
 
     @classmethod
