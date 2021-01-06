@@ -94,3 +94,20 @@ class Shop(commands.Cog):
             await ctx.send(f"You bought **{quantity} {item_n}s** for **{total_price} beans**!")
         else:
             await ctx.send(f"You bought **{item_n}** for **{total_price} beans**!")
+
+    @commands.command(name="inventory", aliases=["inv"], help="List all the items in your inventory", brief="View your inventory")
+    async def inventory(self, ctx):
+        UserData.check_user_entry(ctx.author)
+
+        UserData.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        inventory = json.loads(UserData.c.fetchone()[0])
+
+        inventory_embed = discord.Embed(title=f"{ctx.author.display_name}'s Inventory", color=self.theme_color)
+
+        for item in inventory:
+            item_name = item["name"]
+            item_desc = item["description"]
+            item_quantity = item["quantity"]
+            inventory_embed.add_field(name=item_name, value=f"Quantity: {item_quantity}\n{item_desc}", inline=False)
+
+        await ctx.send(embed=inventory_embed)
