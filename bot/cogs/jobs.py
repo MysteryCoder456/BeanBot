@@ -123,6 +123,11 @@ class Jobs(commands.Cog):
         salary = self.jobs_data[job_id]["salary"]
         new_streak = current_streak + 1
 
+        if not worked_yesterday:
+            UserData.c.execute("UPDATE users SET job_streak = 0 WHERE id = :user_id", {"user_id": ctx.author.id})
+            new_streak = 1
+            await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
+
         UserData.c.execute(
             "UPDATE users SET wallet = :new_amount, job_streak = :new_streak, worked_today = 1 WHERE id = :user_id",
             {
@@ -131,10 +136,6 @@ class Jobs(commands.Cog):
                 "user_id": ctx.author.id
             }
         )
-
-        if not worked_yesterday:
-            UserData.c.execute("UPDATE users SET job_streak = 0 WHERE id = :user_id", {"user_id": ctx.author.id})
-            await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
 
         UserData.conn.commit()
         await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{new_streak} day** streak!")
