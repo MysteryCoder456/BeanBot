@@ -36,21 +36,22 @@ async def on_ready():
     print(f"Bot logged into {len(bot.guilds)} servers.")
 
 
-@bot.event
-async def on_disconnect():
-    print("Exiting...")
-    UserData.conn.commit()
-    UserData.c.close()
-    UserData.conn.close()
+# @bot.event
+# async def on_disconnect():
+#     print("Exiting...")
+#     UserData.conn.commit()
+#     UserData.c.close()
+#     UserData.conn.close()
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(bot.start(TOKEN))
-    except KeyboardInterrupt:
-        loop.run_until_complete(bot.logout())
-    except SystemExit:
-        loop.run_until_complete(bot.logout())
-    finally:
-        loop.close()
+    bot.run(TOKEN)
+    # loop = asyncio.get_event_loop()
+    # try:
+    #     loop.run_until_complete(bot.start(TOKEN))
+    # except KeyboardInterrupt:
+    #     loop.run_until_complete(bot.logout())
+    # except SystemExit:
+    #     loop.run_until_complete(bot.logout())
+    # finally:
+    #     loop.close()
