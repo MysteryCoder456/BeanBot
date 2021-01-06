@@ -124,7 +124,7 @@ class Jobs(commands.Cog):
         new_streak = current_streak + 1
 
         if not worked_yesterday:
-            UserData.c.execute("UPDATE users SET job_streak = 0 WHERE id = :user_id", {"user_id": ctx.author.id})
+            UserData.c.execute("UPDATE users SET job_streak = 1 WHERE id = :user_id", {"user_id": ctx.author.id})
             new_streak = 1
             await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
 
