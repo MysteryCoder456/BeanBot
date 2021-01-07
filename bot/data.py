@@ -8,7 +8,7 @@ class UserData:
 
     @classmethod
     def create_tables(cls):
-        cls.c.execute("""CREATE TABLE "users" (
+        cls.c.execute("""CREATE TABLE IF NOT EXISTS "users" (
             "id"	INTEGER,
             "wallet"	INTEGER DEFAULT 100,
             "bank"	INTEGER DEFAULT 0,
