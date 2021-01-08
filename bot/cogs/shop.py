@@ -13,8 +13,7 @@ class Shop(commands.Cog):
         with open("bot/data/shop_data.json", "r") as shop_file:
             self.shop_data = json.load(shop_file)
 
-        self.is_vowel = lambda ch: (ch == 'a' or ch == 'e' or ch == 'i' or ch == 'o' or ch == 'u' or
-                                    ch == 'A' or ch == 'E' or ch == 'I' or ch == 'O' or ch == 'U')
+        self.is_vowel = lambda ch: (ch in ('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'))
 
     @commands.command(name="shop", help="List the available items in the shop", brief="List buyable items")
     async def shop(self, ctx):
