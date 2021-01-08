@@ -16,14 +16,14 @@ class UserData:
             "job_id"	INTEGER DEFAULT 0,
             "job_streak"	INTEGER DEFAULT 0,
             "worked_today"	BOOL DEFAULT 0,
-            "worked_yesterday"	BOOL DEFAULT 1,
+            "last_work_date"	TEXT DEFAULT '2020-1-1',
             "inventory"	TEXT DEFAULT '[]'
         )""")
         cls.conn.commit()
 
     @classmethod
     def create_new_data(cls, user):
-        cls.c.execute("INSERT INTO users VALUES (:user_id, 100, 0, 500, 0, 0, 0, 1, '[]')", {"user_id": user.id})
+        cls.c.execute("INSERT INTO users VALUES (:user_id, 100, 0, 500, 0, 0, 0, '2020-1-1', '[]')", {"user_id": user.id})
         cls.conn.commit()
         print(f"Created data entry for {user}")
 
