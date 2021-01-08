@@ -84,7 +84,7 @@ class Currency(commands.Cog):
         bank_amount = data[1]
         bank_capacity = data[2]
 
-        if str(amount) == "all":
+        if str(amount) == "all" or str(amount) == "max":
             amount = wallet_amount
 
             if bank_amount + amount > bank_capacity:
@@ -135,7 +135,7 @@ class Currency(commands.Cog):
         wallet_amount = data[0]
         bank_amount = data[1]
 
-        if str(amount) == "all":
+        if str(amount) == "all" or str(amount) == "max":
             amount = bank_amount
         else:
             amount = int(amount)

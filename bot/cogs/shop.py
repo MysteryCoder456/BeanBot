@@ -13,6 +13,9 @@ class Shop(commands.Cog):
         with open("bot/data/shop_data.json", "r") as shop_file:
             self.shop_data = json.load(shop_file)
 
+        self.is_vowel = lambda ch: (ch == 'a' or ch == 'e' or ch == 'i' or ch == 'o' or ch == 'u' or
+                                    ch == 'A' or ch == 'E' or ch == 'I' or ch == 'O' or ch == 'U')
+
     @commands.command(name="shop", help="List the available items in the shop", brief="List buyable items")
     async def shop(self, ctx):
         shop_embed = discord.Embed(title="The Bean Shop", color=self.theme_color)
@@ -68,7 +71,9 @@ class Shop(commands.Cog):
             inventory_entry = {
                 "name": item_n,
                 "description": item_info["description"],
-                "quantity": quantity
+                "quantity": quantity,
+                "function_id": item_info["function_id"],
+                "function_vars": item_info["function_vars"]
             }
             inventory.append(inventory_entry)
 
@@ -96,13 +101,16 @@ class Shop(commands.Cog):
             await ctx.send(f"You bought **{item_n}** for **{total_price} beans**!")
 
     @commands.command(name="inventory", aliases=["inv"], help="List all the items in your inventory", brief="View your inventory")
-    async def inventory(self, ctx):
-        UserData.check_user_entry(ctx.author)
+    async def inventory(self, ctx, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
 
-        UserData.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        UserData.check_user_entry(user)
+
+        UserData.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": user.id})
         inventory = json.loads(UserData.c.fetchone()[0])
 
-        inventory_embed = discord.Embed(title=f"{ctx.author.display_name}'s Inventory", color=self.theme_color)
+        inventory_embed = discord.Embed(title=f"{user.display_name}'s Inventory", color=self.theme_color)
 
         for item in inventory:
             item_name = item["name"]
@@ -111,3 +119,63 @@ class Shop(commands.Cog):
             inventory_embed.add_field(name=item_name, value=f"Quantity: {item_quantity}\n{item_desc}", inline=False)
 
         await ctx.send(embed=inventory_embed)
+
+    @commands.command(name="use", help="Use an item in your inventory", brief="Use an item in your inventory")
+    async def use(self, ctx, *, item_name):
+        UserData.check_user_entry(ctx.author)
+
+        UserData.c.execute("SELECT bank_capacity, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = UserData.c.fetchone()
+        bank_capacity = data[0]
+        inventory = json.loads(data[1])
+
+        # Find the desired item in inventory
+        inv_index = None
+        for (i, item) in enumerate(inventory):
+            if item["name"].lower() == item_name.lower():
+                inv_index = i
+                break
+
+        if inv_index is None:
+            return
+
+        # Remove that item from inventory
+        item_info = inventory[inv_index]
+
+        if item_info["quantity"] > 1:
+            item_info["quantity"] -= 1
+        else:
+            inventory.pop(inv_index)
+
+        # Perform the item's action
+        f_id = item_info["function_id"]
+
+        if f_id is not None:
+            f_vars = item_info["function_vars"]
+
+            if f_id == 0:
+                bank_capacity += f_vars["bank_capacity_increase"]
+                UserData.c.execute(
+                    "UPDATE users SET bank_capacity = :new_capacity WHERE id = :user_id",
+                    {
+                        "new_capacity": bank_capacity,
+                        "user_id": ctx.author.id
+                    }
+                )
+
+        # Write inventory changes to DB
+        UserData.c.execute(
+            "UPDATE users SET inventory = :new_inventory WHERE id = :user_id",
+            {
+                "new_inventory": json.dumps(inventory),
+                "user_id": ctx.author.id
+            }
+        )
+        UserData.conn.commit()
+
+        item_n = item_info["name"]
+
+        if self.is_vowel(item_n[0]):
+            await ctx.send(f"You used an **{item_n}**!")
+        else:
+            await ctx.send(f"You used a **{item_n}**!")

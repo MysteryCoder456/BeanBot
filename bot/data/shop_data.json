@@ -2,11 +2,17 @@
     {
         "name": "Bank Storage Coupon",
         "description": "Increase your bank capacity by 500.",
-        "price": 200
+        "price": 200,
+        "function_id": 0,
+        "function_vars": {
+            "bank_capacity_increase": 250
+        }
     },
     {
         "name": "Bean Sculpture",
         "description": "A sculpture of everyone's favourite food. Just a flex item...",
-        "price": 500
+        "price": 500,
+        "function_id": null,
+        "function_vars": {}
     }
 ]
