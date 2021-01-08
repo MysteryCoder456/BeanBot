@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 
@@ -10,23 +10,9 @@ class Jobs(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
-        self.date = datetime.now().day
 
         with open("bot/data/jobs_data.json", "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
-
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Member):
-        current_date = datetime.now().day
-
-        if current_date > self.date:
-            print("Resetting worked today flags for all users...")
-
-            UserData.c.execute("UPDATE users SET worked_yesterday = worked_today")
-            UserData.c.execute("UPDATE users SET worked_today = 0")
-
-            UserData.conn.commit()
-            self.date = current_date
 
     @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")
     async def myjob(self, ctx):
@@ -102,19 +88,14 @@ class Jobs(commands.Cog):
     async def work(self, ctx):
         UserData.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT wallet, job_id, job_streak, worked_today, worked_yesterday FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        UserData.c.execute("SELECT wallet, job_id, job_streak, last_work_date FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
         data = UserData.c.fetchone()
 
         current_balance = data[0]
         job_id = data[1]
         current_streak = data[2]
-        worked_today = bool(data[3])
-        worked_yesterday = bool(data[4])
-
-        # Check if the user worked today
-        if worked_today:
-            await ctx.send("You've done enough work for today, give yourself a break...")
-            return
+        last_work_date = datetime.strptime(data[3], "%Y-%m-%d %H:%M")
+        today = datetime.now()
 
         if job_id == 0:
             await ctx.send("You're unemployed bro. Get a job...")
@@ -123,16 +104,23 @@ class Jobs(commands.Cog):
         salary = self.jobs_data[job_id]["salary"]
         new_streak = current_streak + 1
 
-        if not worked_yesterday:
-            UserData.c.execute("UPDATE users SET job_streak = 1 WHERE id = :user_id", {"user_id": ctx.author.id})
+        time_diff = (today - last_work_date)
+
+        if time_diff.days > 2:
             new_streak = 1
             await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
 
+        elif time_diff.days < 1:
+            time_left = int(24 - time_diff.total_seconds() / 86400 * 24)
+            await ctx.send(f"You've done enough work for today, try again in {time_left} hours...")
+            return
+
         UserData.c.execute(
-            "UPDATE users SET wallet = :new_amount, job_streak = :new_streak, worked_today = 1 WHERE id = :user_id",
+            "UPDATE users SET wallet = :new_amount, job_streak = :new_streak, last_work_date = :new_lwd WHERE id = :user_id",
             {
                 "new_amount": current_balance + salary,
                 "new_streak": new_streak,
+                "new_lwd": today.strftime("%Y-%m-%d %H:%M"),
                 "user_id": ctx.author.id
             }
         )
