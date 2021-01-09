@@ -1,7 +1,7 @@
 [
     {
         "name": "Bank Storage Coupon",
-        "description": "Increase your bank capacity by 500.",
+        "description": "Increase your bank capacity by 250.",
         "price": 200,
         "function_id": 0,
         "function_vars": {
