@@ -32,11 +32,11 @@ class Jobs(commands.Cog):
         job_salary = current_job["salary"]
 
         embed = discord.Embed(title=f"You are a {job_name}.", color=self.theme_color)
-        embed.add_field(name="You earn", value=f"{job_salary} beans per hour")
+        embed.add_field(name="You earn", value=f"{job_salary} beans per day")
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="jobslist", aliases=["jl", "jobs"], help="List the jobs that you can take", brief="List available jobs")
+    @commands.command(name="joblist", aliases=["jl", "jobs"], help="List the jobs that you can take", brief="List available jobs")
     async def jobslist(self, ctx):
         jobs_embed = discord.Embed(title="Available Jobs", color=self.theme_color)
 
