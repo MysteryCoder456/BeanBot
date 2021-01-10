@@ -28,8 +28,10 @@ class Fun(commands.Cog):
 
         if player_roll > dealer_roll:
             amount_won = math.ceil((player_roll - dealer_roll) / 60 * amount)
-        else:
+        elif player_roll < dealer_roll:
             amount_won = -amount
+        else:
+            amount = 0
 
         UserData.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
