@@ -10,7 +10,7 @@ class Currency(commands.Cog):
         self.theme_color = theme_color
 
     @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has", brief="Check your beans")
-    async def balance(self, ctx, user: discord.User=None):
+    async def balance(self, ctx, user: discord.User = None):
         if user is None:
             user = ctx.author
 

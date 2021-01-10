@@ -45,7 +45,7 @@ class Jobs(commands.Cog):
                 job_name = job["name"]
                 job_salary = job["salary"]
                 job_requirement = job["streak_requirement"]
-                jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**, Work Streak Required: **{job_requirement} days**")
+                jobs_embed.add_field(name=job_name, value=f"Salary: **{job_salary} beans**\nWork Streak Required: **{job_requirement} days**")
 
         await ctx.send(embed=jobs_embed)
 

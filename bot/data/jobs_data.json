@@ -15,8 +15,18 @@
         "streak_requirement": 5
     },
     {
-        "name": "Bean Rights Activist",
+        "name": "Bean Drug Dealer",
         "salary": 50,
         "streak_requirement": 20
+    },
+    {
+        "name": "Bean Rights Activist",
+        "salary": 70,
+        "streak_requirement": 35
+    },
+    {
+        "name": "Counterfeit Bean Producer",
+        "salary": 115,
+        "streak_requirement": 50
     }
 ]
