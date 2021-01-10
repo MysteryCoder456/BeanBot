@@ -31,6 +31,14 @@ async def update_presence():
         await asyncio.sleep(10)
 
 
+@bot.command(name="invite", help="Get the link to invite me to another server", brief="Invite me to another server")
+async def invite(ctx):
+    invite_embed = discord.Embed(title="Bean Bot Invite Link", color=THEME, url="https://discord.com/api/oauth2/authorize?client_id=795564109922959361&permissions=8&scope=bot")
+    invite_embed.add_field(name="Thank you for spreading word about Bean Bot!", value=":D")
+
+    await ctx.send(embed=invite_embed)
+
+
 @bot.event
 async def on_ready():
     UserData.create_tables()
