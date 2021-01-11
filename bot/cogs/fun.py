@@ -1,4 +1,5 @@
 import random
+import asyncio
 import math
 import discord
 from discord.ext import commands
@@ -31,7 +32,7 @@ class Fun(commands.Cog):
         elif player_roll < dealer_roll:
             amount_won = -amount
         else:
-            amount = 0
+            amount_won = 0
 
         UserData.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
@@ -58,4 +59,29 @@ class Fun(commands.Cog):
             gamble_embed.set_footer(text="You won nothing!")
 
         await ctx.send(embed=gamble_embed)
+
+    @commands.command(name="fight", help="Pick a fight with someone", brief="Pick a fight with someone")
+    async def fight(self, ctx, user: discord.User):
+        p1_health = 100
+        p2_health = 100
+        winner = None
+
+        def check_p1(message):
+            return message.author == ctx.author and message.channel == ctx.channel
+
+        def check_p2(message):
+            return message.author == user and message.channel == ctx.channel
+
+        while True:
+            response = None
+            try:
+                while True:
+                    response = await self.bot.wait_for("message", check=check_p2, timeout=30)
+                    if response == "punch":
+                        damage = random.randint(10, 60)
+                        p1_health -= damage
+
+            except asyncio.TimeoutError:
+                await ctx.send("")
+                break
 
