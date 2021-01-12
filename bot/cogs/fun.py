@@ -64,7 +64,8 @@ class Fun(commands.Cog):
     async def fight(self, ctx, user: discord.User):
         p1_health = 100
         p2_health = 100
-        winner = None
+        p1_name = ctx.author.display_name
+        p2_name = user.display_name
 
         def check_p1(message):
             return message.author == ctx.author and message.channel == ctx.channel
@@ -72,16 +73,92 @@ class Fun(commands.Cog):
         def check_p2(message):
             return message.author == user and message.channel == ctx.channel
 
+        await ctx.send(f"{ctx.author.mention} wants to fight {user.mention}. Let's see how this goes...")
+
         while True:
-            response = None
+            # Player 2 turn
+            p2_response = None
+            p2_resp_valid = False
+
             try:
-                while True:
-                    response = await self.bot.wait_for("message", check=check_p2, timeout=30)
-                    if response == "punch":
+                while not p2_resp_valid:
+                    await ctx.send(f"{user.mention}, it's your turn! What will you do?")
+                    await ctx.send("`punch`, `defend`, `end`")
+
+                    p2_response = (await self.bot.wait_for("message", check=check_p2, timeout=30)).content
+
+                    if p2_response == "punch":
                         damage = random.randint(10, 60)
                         p1_health -= damage
+                        p2_resp_valid = True
+
+                        await ctx.send(f"**{p2_name}** bazooka punched **{p1_name}** and did **{damage}** damage! wHoOaA...")
+
+                    elif p2_response == "defend":
+                        heal = random.randint(5, 30)
+                        p2_health += heal
+                        p2_resp_valid = True
+
+                        await ctx.send(f"**{p2_name}** defended and regained **{heal}** health! Proteccshun...")
+
+                    elif p2_response == "end":
+                        p2_resp_valid = True
+                        await ctx.send(f"**{p2_name}** chickened out, spam noob in the chat!")
+                        return
+
+                    else:
+                        await ctx.send("Invalid response!")
 
             except asyncio.TimeoutError:
-                await ctx.send("")
-                break
+                await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
+                return
+
+            if p1_health <= 0:
+                await ctx.send(f"Wow **{p1_name}** just died. Git gud noooob!")
+                return
+            else:
+                await ctx.send(f"**{p1_name}** is now left with **{p1_health}** health.")
+
+            # Player 1 turn
+            p1_response = None
+            p1_resp_valid = False
+
+            try:
+                while not p1_resp_valid:
+                    await ctx.send(f"{ctx.author.mention}, it's your turn! What will you do?")
+                    await ctx.send("`punch`, `defend`, `end`")
+
+                    p1_response = (await self.bot.wait_for("message", check=check_p1, timeout=30)).content
+
+                    if p1_response == "punch":
+                        damage = random.randint(10, 60)
+                        p2_health -= damage
+                        p1_resp_valid = True
+
+                        await ctx.send(f"**{p1_name}** bazooka punched **{p2_name}** and did **{damage}** damage! wHoOaA...")
+
+                    elif p1_response == "defend":
+                        heal = random.randint(5, 30)
+                        p1_health += heal
+                        p1_resp_valid = True
+
+                        await ctx.send(f"**{p1_name}** defended and regained **{heal}** health! Proteccshun...")
+
+                    elif p1_response == "end":
+                        p1_resp_valid = True
+                        await ctx.send(f"**{p1_name}** chickened out, spam noob in the chat!")
+                        return
+
+                    else:
+                        await ctx.send("Invalid response!")
+
+            except asyncio.TimeoutError:
+                await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
+                return
+
+            if p2_health <= 0:
+                await ctx.send(f"Wow **{p2_name}** just died. Git gud noooob!")
+                return
+            else:
+                await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
 
