@@ -110,7 +110,7 @@ class Fun(commands.Cog):
                         await ctx.send("Invalid response!")
 
             except asyncio.TimeoutError:
-                await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
+                await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
                 return
 
             if p1_health <= 0:
@@ -153,7 +153,7 @@ class Fun(commands.Cog):
                         await ctx.send("Invalid response!")
 
             except asyncio.TimeoutError:
-                await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
+                await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
                 return
 
             if p2_health <= 0:
