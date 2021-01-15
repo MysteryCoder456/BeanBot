@@ -11,6 +11,7 @@ class Fun(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
+        self.currently_fighting = []
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend", brief="Gamble some money")
     async def gamble(self, ctx, amount: int):
@@ -67,6 +68,17 @@ class Fun(commands.Cog):
         p1_name = ctx.author.display_name
         p2_name = user.display_name
 
+        if ctx.author in self.currently_fighting:
+            await ctx.send("You are already fighting someone at the moment...")
+            return
+
+        elif user in self.currently_fighting:
+            await ctx.send(f"**{user.display_name}** is already fighting someone at the moment...")
+            return
+
+        self.currently_fighting.append(ctx.author)
+        self.currently_fighting.append(user)
+
         def check_p1(message):
             return message.author == ctx.author and message.channel == ctx.channel
 
@@ -104,6 +116,8 @@ class Fun(commands.Cog):
                     elif p2_response == "end":
                         p2_resp_valid = True
                         await ctx.send(f"**{p2_name}** chickened out, spam noob in the chat!")
+                        self.currently_fighting.remove(ctx.author)
+                        self.currently_fighting.remove(user)
                         return
 
                     else:
@@ -111,10 +125,14 @@ class Fun(commands.Cog):
 
             except asyncio.TimeoutError:
                 await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
+                self.currently_fighting.remove(ctx.author)
+                self.currently_fighting.remove(user)
                 return
 
             if p1_health <= 0:
                 await ctx.send(f"Wow **{p1_name}** just died. Git gud noooob!")
+                self.currently_fighting.remove(ctx.author)
+                self.currently_fighting.remove(user)
                 return
             else:
                 await ctx.send(f"**{p1_name}** is now left with **{p1_health}** health.")
@@ -147,6 +165,8 @@ class Fun(commands.Cog):
                     elif p1_response == "end":
                         p1_resp_valid = True
                         await ctx.send(f"**{p1_name}** chickened out, spam noob in the chat!")
+                        self.currently_fighting.remove(ctx.author)
+                        self.currently_fighting.remove(user)
                         return
 
                     else:
@@ -154,10 +174,14 @@ class Fun(commands.Cog):
 
             except asyncio.TimeoutError:
                 await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
+                self.currently_fighting.remove(ctx.author)
+                self.currently_fighting.remove(user)
                 return
 
             if p2_health <= 0:
                 await ctx.send(f"Wow **{p2_name}** just died. Git gud noooob!")
+                self.currently_fighting.remove(ctx.author)
+                self.currently_fighting.remove(user)
                 return
             else:
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
