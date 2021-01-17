@@ -1,3 +1,4 @@
+import random
 import discord
 from discord.ext import commands
 
@@ -164,3 +165,49 @@ class Currency(commands.Cog):
 
         UserData.conn.commit()
         await ctx.send(f"You withdrew **{amount} beans** from your bank.")
+
+
+    @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling", brief="\"Borrow\" some money")
+    @commands.cooldown(1, 120)
+    async def rob(self, ctx, victim: discord.Member):
+        UserData.check_user_entry(ctx.author)
+        UserData.check_user_entry(victim)
+
+        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        robber_wallet = UserData.c.fetchone()[0]
+        
+        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": victim.id})
+        victim_wallet = UserData.c.fetchone()[0]
+
+        if robber_wallet < 150:
+            amount_needed = 150 - robber_wallet
+            await ctx.send(f"You need at least 150 beans for that. You need {amount_needed} more beans...")
+            return
+        
+        chance = random.randint(0, 100) 
+
+        if chance > 50:
+            amount_stolen = random.randint(10, victim_wallet)
+            await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
+        else:
+            amount_stolen = random.randint(-150, -70)
+            await ctx.send(f"You got caught stealing from **{victim.display_name}** and had to pay them **{amount_stolen} beans**")
+
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
+            {
+                "new_wallet": robber_wallet + amount_stolen,
+                "user_id": ctx.author.id
+            }
+        )
+        UserData.c.execute(
+            "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
+            {
+                "new_wallet": victim_wallet - amount_stolen,
+                "user_id": victim.id
+            }
+        )
+
+        UserData.conn.commit()
+
+
