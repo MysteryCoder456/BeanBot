@@ -40,6 +40,18 @@ async def invite(ctx):
 
 
 @bot.event
+async def on_command_error(ctx, exception):
+    if isinstance(exception, commands.errors.CommandOnCooldown):
+        await ctx.send(f"Chill out bean bro, try again in {exception.cooldown} seconds...")
+
+    elif isinstance(exception, commands.errors.MissingRequiredArgument):
+        await ctx.send(f"`{exception.param.name}` is a required input.")
+
+    elif isinstance(exception, commands.errors.CommandNotFound):
+        await ctx.send("That's not a real command...")
+
+
+@bot.event
 async def on_ready():
     UserData.create_tables()
     bot.loop.create_task(update_presence())
