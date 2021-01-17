@@ -42,7 +42,7 @@ async def invite(ctx):
 @bot.event
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands.errors.CommandOnCooldown):
-        await ctx.send(f"Chill out bean bro, try again in {exception.cooldown} seconds...")
+        await ctx.send(f"Chill out bean bro, try again in {exception.retry_after} seconds...")
 
     elif isinstance(exception, commands.errors.MissingRequiredArgument):
         await ctx.send(f"`{exception.param.name}` is a required input.")
