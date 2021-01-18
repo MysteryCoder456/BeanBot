@@ -29,7 +29,7 @@ class Fun(commands.Cog):
         dealer_roll = random.randint(1, 6)
 
         if player_roll > dealer_roll:
-            amount_won = math.ceil((player_roll - dealer_roll) / 60 * amount)
+            amount_won = math.ceil((player_roll - dealer_roll) / 6 * amount)
         elif player_roll < dealer_roll:
             amount_won = -amount
         else:
