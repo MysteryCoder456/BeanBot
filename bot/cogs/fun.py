@@ -1,4 +1,5 @@
 import random
+import json
 import asyncio
 import math
 import discord
@@ -12,6 +13,9 @@ class Fun(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
         self.currently_fighting = []
+
+        with open("bot/data/beanlations.json", "r") as beanlations_file:
+            self.beanlations = json.load(beanlations_file)
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend", brief="Gamble some money")
     async def gamble(self, ctx, amount: int):
@@ -185,4 +189,9 @@ class Fun(commands.Cog):
                 return
             else:
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
+
+    @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations", brief="Pray to the Bean Gods")
+    async def pray(self, ctx):
+        prayer = random.choice(self.beanlations)
+        await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
 
