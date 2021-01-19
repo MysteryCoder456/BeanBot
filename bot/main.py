@@ -1,4 +1,5 @@
 import os
+import random
 import asyncio
 import discord
 from discord.ext import commands
@@ -48,7 +49,20 @@ async def on_command_error(ctx, exception):
         await ctx.send(f"`{exception.param.name}` is a required input.")
 
     elif isinstance(exception, commands.errors.CommandNotFound):
-        await ctx.send("That's not a real command...")
+        cmd_used = str(ctx.invoked_with)
+
+        if cmd_used.endswith("rate"):
+            if len(ctx.message.mentions) > 0:
+                user = ctx.message.mentions[0]
+            else:
+                user = ctx.author
+
+            rate = random.randint(0, 100)
+            cmd_used = cmd_used.strip("rate").capitalize()
+            await ctx.send(f"**{user.mention}** is {rate}% {cmd_used}.")
+
+        else:
+            await ctx.send("That's not a real command...")
 
 
 @bot.event
