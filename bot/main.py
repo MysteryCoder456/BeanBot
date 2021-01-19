@@ -58,7 +58,7 @@ async def on_command_error(ctx, exception):
                 user = ctx.author
 
             rate = random.randint(0, 100)
-            cmd_used = cmd_used.strip("rate").capitalize()
+            cmd_used = cmd_used[:-4]
             await ctx.send(f"**{user.mention}** is {rate}% {cmd_used}.")
 
         else:
