@@ -6,27 +6,27 @@
     },
     {
         "name": "Bean Collector",
-        "salary": 10,
+        "salary": 20,
         "streak_requirement": 0
     },
     {
         "name": "Bean Factory Worker",
-        "salary": 25,
+        "salary": 50,
         "streak_requirement": 5
     },
     {
         "name": "Bean Drug Dealer",
-        "salary": 50,
+        "salary": 100,
         "streak_requirement": 20
     },
     {
         "name": "Bean Rights Activist",
-        "salary": 70,
+        "salary": 140,
         "streak_requirement": 35
     },
     {
         "name": "Counterfeit Bean Producer",
-        "salary": 115,
+        "salary": 230,
         "streak_requirement": 50
     }
 ]
