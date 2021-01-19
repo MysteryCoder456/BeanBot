@@ -175,7 +175,7 @@ class Currency(commands.Cog):
 
         UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
         robber_wallet = UserData.c.fetchone()[0]
-        
+
         UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": victim.id})
         victim_wallet = UserData.c.fetchone()[0]
 
@@ -183,10 +183,10 @@ class Currency(commands.Cog):
             amount_needed = 150 - robber_wallet
             await ctx.send(f"You need at least 150 beans for that. You need {amount_needed} more beans...")
             return
-        
-        chance = random.randint(0, 100) 
 
-        if chance > 50:
+        chance = random.randint(0, 100)
+
+        if chance > 25:
             amount_stolen = random.randint(10, victim_wallet)
             await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
         else:
