@@ -189,7 +189,8 @@ class Fun(commands.Cog):
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
 
     @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations", brief="Pray to the Bean Gods")
-    async def pray(self, ctx):
-        prayer = random.choice(self.beanlations)
-        await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
+    async def pray(self, ctx, *, prayer=None):
+        if prayer is None:
+            prayer = random.choice(self.beanlations)
 
+        await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
