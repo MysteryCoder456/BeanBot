@@ -111,8 +111,14 @@ class Jobs(commands.Cog):
             await ctx.send("You didn't show up to work yesterday. Your work streak has been reset!")
 
         elif time_diff.days < 1:
-            time_left = int(24 - time_diff.total_seconds() / 86400 * 24)
-            await ctx.send(f"You've done enough work for today, try again in {time_left} hours...")
+            time_left = 24 - time_diff.total_seconds() / 3600
+
+            if time_left > 1:
+                await ctx.send(f"You've done enough work for today, try again in {int(time_left)} hours...")
+            else:
+                time_left = time_left * 60
+                await ctx.send(f"You've done enough work for today, try again in {int(time_left)} minutes...")
+
             return
 
         UserData.c.execute(
