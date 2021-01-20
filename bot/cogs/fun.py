@@ -146,7 +146,7 @@ class Fun(commands.Cog):
 
             try:
                 while not p1_resp_valid:
-                    await ctx.send(f"{user.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
+                    await ctx.send(f"{ctx.author.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
 
                     p1_response = (await self.bot.wait_for("message", check=check_p1, timeout=30)).content
 
