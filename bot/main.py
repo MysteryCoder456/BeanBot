@@ -59,7 +59,7 @@ async def on_command_error(ctx, exception):
 
             rate = random.randint(0, 100)
             cmd_used = cmd_used[:-4]
-            await ctx.send(f"**{user.mention}** is {rate}% {cmd_used}.")
+            await ctx.send(f"**{user.display_name}** is {rate}% {cmd_used}.")
 
         else:
             await ctx.send("That's not a real command...")

@@ -98,13 +98,12 @@ class Fun(commands.Cog):
 
             try:
                 while not p2_resp_valid:
-                    await ctx.send(f"{user.mention}, it's your turn! What will you do?")
-                    await ctx.send("`punch`, `defend`, `end`")
+                    await ctx.send(f"{user.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
 
                     p2_response = (await self.bot.wait_for("message", check=check_p2, timeout=30)).content
 
                     if p2_response == "punch":
-                        damage = random.randint(10, 60)
+                        damage = random.randint(10, 45)
                         p1_health -= damage
                         p2_resp_valid = True
 
@@ -147,13 +146,12 @@ class Fun(commands.Cog):
 
             try:
                 while not p1_resp_valid:
-                    await ctx.send(f"{ctx.author.mention}, it's your turn! What will you do?")
-                    await ctx.send("`punch`, `defend`, `end`")
+                    await ctx.send(f"{user.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
 
                     p1_response = (await self.bot.wait_for("message", check=check_p1, timeout=30)).content
 
                     if p1_response == "punch":
-                        damage = random.randint(10, 60)
+                        damage = random.randint(10, 45)
                         p2_health -= damage
                         p1_resp_valid = True
 
