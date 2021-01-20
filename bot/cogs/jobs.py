@@ -80,7 +80,7 @@ class Jobs(commands.Cog):
             return
 
         embed = discord.Embed(title=f"You have become a {jn}!", color=self.theme_color)
-        embed.add_field(name="You will earn", value=f"{js} beans per hour")
+        embed.add_field(name="You will earn", value=f"{js} beans per day")
 
         await ctx.send(embed=embed)
 
