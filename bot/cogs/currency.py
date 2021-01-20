@@ -186,7 +186,7 @@ class Currency(commands.Cog):
 
         chance = random.randint(0, 100)
 
-        if chance > 25:
+        if chance > 35:
             amount_stolen = random.randint(10, victim_wallet)
             await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
         else:
