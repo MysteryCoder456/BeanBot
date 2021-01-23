@@ -13,19 +13,19 @@ class Fun(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
         self.currently_fighting = []
-        self.deleted_msg = None
-        self.edited_msg = None
+        self.deleted_msgs = {}
+        self.edited_msgs = {}
 
         with open("bot/data/beanlations.json", "r") as beanlations_file:
             self.beanlations = json.load(beanlations_file)
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        self.deleted_msg = message
+    async def on_message_delete(self, message: discord.Message):
+        self.deleted_msgs[str(message.channel.id)] = message
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
-        self.edited_msg = before
+        self.edited_msgs[str(before.channel.id)] = before
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend", brief="Gamble some money")
     async def gamble(self, ctx, amount: int):
@@ -207,7 +207,7 @@ class Fun(commands.Cog):
 
     @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message", brief="See a recently deleted message")
     async def snipe(self, ctx):
-        msg = self.deleted_msg
+        msg = self.deleted_msgs[str(ctx.channel.id)]
 
         snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
         snipe_embed.set_thumbnail(url=msg.author.avatar_url)
@@ -217,7 +217,7 @@ class Fun(commands.Cog):
 
     @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message", brief="See a recently edited message")
     async def editsnipe(self, ctx):
-        msg = self.edited_msg
+        msg = self.edited_msgs[str(ctx.channel.id)]
 
         snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
         snipe_embed.set_thumbnail(url=msg.author.avatar_url)
