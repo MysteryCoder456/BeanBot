@@ -219,7 +219,7 @@ class Fun(commands.Cog):
     async def editsnipe(self, ctx):
         msg = self.edited_msgs[str(ctx.channel.id)]
 
-        snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
+        snipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
         snipe_embed.set_thumbnail(url=msg.author.avatar_url)
         snipe_embed.add_field(name=msg.author.display_name, value=msg.content)
 
