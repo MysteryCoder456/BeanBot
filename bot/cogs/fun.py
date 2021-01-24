@@ -1,3 +1,4 @@
+import os
 import random
 import json
 import asyncio
@@ -15,8 +16,9 @@ class Fun(commands.Cog):
         self.currently_fighting = []
         self.deleted_msgs = {}
         self.edited_msgs = {}
+        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
 
-        with open("bot/data/beanlations.json", "r") as beanlations_file:
+        with open(os.path.join(data_dir, "beanlations.json"), "r") as beanlations_file:
             self.beanlations = json.load(beanlations_file)
 
     @commands.Cog.listener()

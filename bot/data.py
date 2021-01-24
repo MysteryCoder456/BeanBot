@@ -1,8 +1,10 @@
+import os
 import sqlite3
 
 
 class UserData:
-    filename = "bot/data/data.db"
+    data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+    filename = os.path.join(data_dir, "data.db")
     conn = sqlite3.connect(filename)
     c = conn.cursor()
 

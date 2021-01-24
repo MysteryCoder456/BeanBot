@@ -1,3 +1,4 @@
+import os
 import json
 from datetime import datetime
 import discord
@@ -10,8 +11,9 @@ class Jobs(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
+        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
 
-        with open("bot/data/jobs_data.json", "r") as jobs_file:
+        with open(os.path.join(data_dir, "jobs_data.json"), "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
 
     @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")

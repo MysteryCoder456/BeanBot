@@ -1,3 +1,4 @@
+import os
 import json
 import discord
 from discord.ext import commands
@@ -9,8 +10,9 @@ class Shop(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
+        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
 
-        with open("bot/data/shop_data.json", "r") as shop_file:
+        with open(os.path.join(data_dir, "shop_data.json"), "r") as shop_file:
             self.shop_data = json.load(shop_file)
 
         self.is_vowel = lambda ch: (ch in ('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'))
