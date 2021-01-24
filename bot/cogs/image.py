@@ -17,10 +17,19 @@ class Image(commands.Cog):
     async def abandon(self, ctx, *, text):
         img_path = os.path.join(self.images_dir, "abandon.jpg")
         font_path = os.path.join(self.fonts_dir, "Arial.ttf")
-
-        font = ImageFont.truetype(font=font_path, size=17)
         image = PIL.Image.open(img_path)
         draw = ImageDraw.Draw(image)
+        font = ImageFont.truetype(font=font_path)
+
+        font_size = 20
+        w = draw.textlength(text, font=font)
+
+        while w > 150:
+            font_size -= 1
+            w = draw.textlength(text, font=font)
+
+        font.size = font_size
+
         draw.text((60, 280), text, fill=(0, 0, 0), font=font)
 
         cache_filename = os.path.join(self.images_dir, "cache.jpg")
