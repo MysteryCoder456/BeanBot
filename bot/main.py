@@ -10,6 +10,7 @@ from cogs.currency import Currency
 from cogs.jobs import Jobs
 from cogs.shop import Shop
 from cogs.fun import Fun
+from cogs.image import Image
 from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
@@ -21,6 +22,7 @@ bot.add_cog(Currency(bot, THEME))
 bot.add_cog(Jobs(bot, THEME))
 bot.add_cog(Shop(bot, THEME))
 bot.add_cog(Fun(bot, THEME))
+bot.add_cog(Image(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
 
