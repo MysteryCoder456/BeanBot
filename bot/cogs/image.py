@@ -15,18 +15,15 @@ class Image(commands.Cog):
 
     @commands.command(name="abandon", help="Baby abandon meme", brief="Baby abandon meme")
     async def abandon(self, ctx, *, text):
-        try:
-            img_path = os.path.join(self.images_dir, "abandon.jpg")
-            font_path = os.path.join(self.fonts_dir, "Arial.ttf")
+        img_path = os.path.join(self.images_dir, "abandon.jpg")
+        font_path = os.path.join(self.fonts_dir, "Arial.ttf")
 
-            font = ImageFont.truetype(font=font_path, size=17)
-            image = PIL.Image.open(img_path)
-            draw = ImageDraw.Draw(image)
-            draw.text((60, 280), text, fill=(0, 0, 0), font=font)
+        font = ImageFont.truetype(font=font_path, size=17)
+        image = PIL.Image.open(img_path)
+        draw = ImageDraw.Draw(image)
+        draw.text((60, 280), text, fill=(0, 0, 0), font=font)
 
-            cache_filename = os.path.join(self.images_dir, "cache.jpg")
-            image.save(cache_filename)
+        cache_filename = os.path.join(self.images_dir, "cache.jpg")
+        image.save(cache_filename)
 
-            await ctx.send(file=discord.File(cache_filename))
-        except Exception as e:
-            print(e)
+        await ctx.send(file=discord.File(cache_filename))
