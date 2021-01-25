@@ -77,6 +77,8 @@ async def on_command_error(ctx, exception):
 
         else:
             await ctx.send("That's not a real command...")
+    else:
+        raise exception
 
 
 @bot.event
