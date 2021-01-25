@@ -1,5 +1,6 @@
 import os
 import re
+import urllib
 import discord
 from discord.ext import commands
 import PIL
@@ -34,7 +35,35 @@ class Image(commands.Cog):
 
         draw.text((54, 275), text, fill=(0, 0, 0), font=font)
 
-        cache_filename = os.path.join(self.images_dir, "cache.jpg")
+        cache_filename = os.path.join(self.images_dir, "cache", "abandon.jpg")
+        image.save(cache_filename)
+
+        await ctx.send(file=discord.File(cache_filename))
+
+    @commands.command(name="slap", help="Batman slap meme", brief="Batman slap meme")
+    async def slap(self, ctx, person1: discord.User, person2: discord.User = None):
+        if person2 is None:
+            slapper = ctx.author
+            victim = person1
+        else:
+            slapper = person1
+            victim = person2
+
+        img_path = os.path.join(self.images_dir, "slap.jpg")
+        pfp1_path = os.path.join(self.images_dir, "cache", "pfp1.jpg")
+        pfp2_path = os.path.join(self.images_dir, "cache", "pfp2.jpg")
+
+        await slapper.avatar_url.save(pfp1_path)
+        await victim.avatar_url.save(pfp2_path)
+
+        image = PIL.Image.open(img_path)
+        pfp1 = PIL.Image.open(pfp1_path).resize((150, 150))
+        pfp2 = PIL.Image.open(pfp2_path).resize((150, 150))
+
+        image.paste(pfp1, (457, 304))
+        image.paste(pfp2, (202, 412))
+
+        cache_filename = os.path.join(self.images_dir, "cache", "slap.jpg")
         image.save(cache_filename)
 
         await ctx.send(file=discord.File(cache_filename))
