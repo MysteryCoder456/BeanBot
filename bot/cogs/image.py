@@ -32,7 +32,7 @@ class Image(commands.Cog):
             font_size -= 1
             font = ImageFont.truetype(font=font_path, size=font_size)
 
-        draw.text((54, 270), text, fill=(0, 0, 0), font=font)
+        draw.text((54, 275), text, fill=(0, 0, 0), font=font)
 
         cache_filename = os.path.join(self.images_dir, "cache.jpg")
         image.save(cache_filename)
