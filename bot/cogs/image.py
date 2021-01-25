@@ -26,7 +26,7 @@ class Image(commands.Cog):
         while True:
             w, _ = draw.textsize(text, font=font)
 
-            if w <= 155:
+            if w <= 155 or font_size <= 1:
                 break
 
             font_size -= 1
