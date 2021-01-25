@@ -13,6 +13,7 @@ class Image(commands.Cog):
         self.theme_color = theme_color
         self.images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "images")
         self.fonts_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "fonts")
+        os.mkdir(os.path.join(self.images_dir, "cache"))
 
     @commands.command(name="abandon", help="Baby abandon meme", brief="Baby abandon meme")
     async def abandon(self, ctx, *, text):
