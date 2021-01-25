@@ -24,7 +24,7 @@ class Image(commands.Cog):
         font = ImageFont.truetype(font=font_path, size=font_size)
 
         while True:
-            w = draw.textlength(text, font=font)
+            w, _ = draw.textsize(text, font=font)
 
             if w <= 155:
                 break
