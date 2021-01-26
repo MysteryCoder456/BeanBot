@@ -20,7 +20,7 @@ DBL_AUTH = os.getenv("DBL_AUTH")
 THEME = discord.Color.green()
 PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
-db_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8080, webhook_auth=DBL_AUTH)
+dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8080, webhook_auth=DBL_AUTH)
 
 bot.add_cog(Currency(bot, THEME))
 bot.add_cog(Jobs(bot, THEME))
