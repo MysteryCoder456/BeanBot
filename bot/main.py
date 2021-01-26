@@ -116,12 +116,12 @@ async def on_ready():
     print(f"Bot logged into {len(bot.guilds)} servers.")
 
 
-# @bot.event
-# async def on_disconnect():
-#     print("Exiting...")
-#     UserData.conn.commit()
-#     UserData.c.close()
-#     UserData.conn.close()
+@bot.event
+async def on_disconnect():
+    print("Exiting...")
+    UserData.conn.commit()
+    UserData.c.close()
+    UserData.conn.close()
 
 
 if __name__ == "__main__":
