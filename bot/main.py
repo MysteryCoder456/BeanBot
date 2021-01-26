@@ -21,7 +21,7 @@ DBL_AUTH = os.getenv("DBL_AUTH")
 THEME = discord.Color.green()
 PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
-dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8080, webhook_auth=DBL_AUTH)
+dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
 
 bot.add_cog(Currency(bot, THEME))
 bot.add_cog(Jobs(bot, THEME))
@@ -76,6 +76,7 @@ async def on_command_error(ctx, exception):
 
 @bot.event
 async def on_dbl_vote(data):
+    print("hello")
     print(data)
     # UserData.check_user_entry(user)
 
@@ -107,14 +108,10 @@ async def on_ready():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(bot.start(TOKEN))
+        bot.run(TOKEN)
     except KeyboardInterrupt:
-        loop.run_until_complete(bot.logout())
-    except SystemExit:
-        loop.run_until_complete(bot.logout())
+        print()
     finally:
-        loop.close()
         asyncio.run(dbl_client.close())
 
