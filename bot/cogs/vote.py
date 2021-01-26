@@ -30,7 +30,7 @@ class Vote(commands.Cog):
             )
             UserData.conn.commit()
 
-    @commands.command(name="vote", help="Get links to Bot List site where you can vote for me", brief="Help me grow")
+    @commands.command(name="vote", help="Get links to Bot List sites where you can vote for me", brief="Help me grow")
     async def vote(self, ctx):
         vote_embed = discord.Embed(title="Vote Bean Bot for Best Bot", color=self.theme_color)
         vote_embed.add_field(name="Top.gg", value="[Click here to vote](https://top.gg/bot/795564109922959361)")
