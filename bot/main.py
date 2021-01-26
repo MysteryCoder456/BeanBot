@@ -1,6 +1,7 @@
 import os
 import random
 import asyncio
+import dbl
 import discord
 from discord.ext import commands
 
@@ -14,9 +15,12 @@ from cogs.image import Image
 from cogs.owner import Owner
 
 TOKEN = os.getenv("BEAN_TOKEN")
+DBL_TOKEN = os.getenv("BEAN_DBL_TOKEN")
+DBL_AUTH = os.getenv("DBL_AUTH")
 THEME = discord.Color.green()
 PREFIX = "b."
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
+db_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
 
 bot.add_cog(Currency(bot, THEME))
 bot.add_cog(Jobs(bot, THEME))
@@ -67,6 +71,23 @@ async def on_command_error(ctx, exception):
             await ctx.send("That's not a real command...")
     else:
         raise exception
+
+
+@bot.event
+async def on_dbl_vote(data):
+    print(data)
+    # UserData.check_user_entry(user)
+
+    # UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
+    # wallet = UserData.c.fetchone()[0]
+
+    # UserData.c.execute(
+    #     "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
+    #     {
+    #         "new_amount": wallet + self.vote_reward,
+    #         "user_id": user.id
+    #     }
+    # )
 
 
 @bot.event
