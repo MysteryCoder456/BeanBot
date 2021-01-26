@@ -1,6 +1,4 @@
 import os
-import re
-import urllib
 import discord
 from discord.ext import commands
 import PIL
