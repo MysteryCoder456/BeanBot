@@ -191,7 +191,7 @@ class Currency(commands.Cog):
             await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
         else:
             amount_stolen = random.randint(-150, -70)
-            await ctx.send(f"You got caught stealing from **{victim.display_name}** and had to pay them **{amount_stolen} beans**")
+            await ctx.send(f"You got caught stealing from **{victim.display_name}** and had to pay them **{abs(amount_stolen)} beans**")
 
         UserData.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
