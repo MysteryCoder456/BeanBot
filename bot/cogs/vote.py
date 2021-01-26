@@ -16,7 +16,7 @@ class Vote(commands.Cog):
             user = self.bot.get_user(int(data["user"]))
             UserData.check_user_entry(user)
             print(f"{user.name} has upvoted the bot on Top.gg")
-            await user.send(f"Thank you for voting for me on Top.gg. You have gotten {self.vote_reward} as a gift!")
+            await user.send(f"Thank you for voting for me on Top.gg. You have gotten {self.vote_reward} beans as a gift!")
 
             UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
             wallet = UserData.c.fetchone()[0]
