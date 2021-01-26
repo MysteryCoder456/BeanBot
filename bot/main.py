@@ -1,4 +1,5 @@
 import os
+import time
 import random
 import asyncio
 import dbl
@@ -106,13 +107,14 @@ async def on_ready():
 
 
 if __name__ == "__main__":
-    bot.run(TOKEN)
-    # loop = asyncio.get_event_loop()
-    # try:
-    #     loop.run_until_complete(bot.start(TOKEN))
-    # except KeyboardInterrupt:
-    #     loop.run_until_complete(bot.logout())
-    # except SystemExit:
-    #     loop.run_until_complete(bot.logout())
-    # finally:
-    #     loop.close()
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(bot.start(TOKEN))
+    except KeyboardInterrupt:
+        loop.run_until_complete(bot.logout())
+    except SystemExit:
+        loop.run_until_complete(bot.logout())
+    finally:
+        loop.close()
+        asyncio.run(dbl_client.close())
+
