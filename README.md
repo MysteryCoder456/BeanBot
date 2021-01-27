@@ -14,7 +14,7 @@ Some mini-games you can play:
 Earning money is fun, stealing it is even more fun. But when you're stolen from it's not as fun. So you can deposit your beans to be kept safely inside your bank. You start with only 500 beans of bank storage, you can extend this by buying Bank Storage Coupons from the shop.
 
 ## Image Commands
-Generate your own memes using the Image commands. Making memes with Bean Bot is statiscally proven to get more updoots on Reddit, just saying...
+Generate your own memes using the Image commands. Making memes with Bean Bot is statistically proven to get more updoots on Reddit, just saying...
 
 ## Shop
 Speaking of buying from the shops, you can buy a variety of items from the shop that can do different things.
