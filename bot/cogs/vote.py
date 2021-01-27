@@ -12,7 +12,7 @@ class Vote(commands.Cog):
         self.vote_reward = 100
 
     @commands.Cog.listener()
-    async def on_message(message: discord.Message):
+    async def on_message(self, message: discord.Message):
         vote_reminder_chance = 10
         
         if random.randint(0, 1000) <= vote_reminder_chance:
