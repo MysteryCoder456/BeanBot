@@ -13,8 +13,7 @@ class Vote(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        vote_reminder_chance = 50
-        
+        vote_reminder_chance = 25
         if random.randint(0, 1000) <= vote_reminder_chance:
             await message.channel.send("You can get **100 beans** for free if you vote for me on Top.gg. Do `b.vote` for more info...")
 
