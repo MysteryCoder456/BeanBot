@@ -12,12 +12,6 @@ class Vote(commands.Cog):
         self.vote_reward = 100
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        vote_reminder_chance = 25
-        if random.randint(0, 1000) <= vote_reminder_chance:
-            await message.channel.send("You can get **100 beans** for free if you vote for me on Top.gg. Do `b.vote` for more info...")
-
-    @commands.Cog.listener()
     async def on_dbl_vote(self, data):
         if data["type"] == "upvote":
             user = self.bot.get_user(int(data["user"]))

@@ -27,7 +27,7 @@ class Currency(commands.Cog):
         embed.add_field(name="Wallet", value=f"{wallet} beans")
         embed.add_field(name="Bank", value=f"{bank}/{bank_capacity} beans")
 
-        await ctx.send(embed=embed)
+        await ctx.send("You can get beans for free if you vote for me on Top.gg. Do `b.vote` for more info...", embed=embed)
 
     @commands.command(name="pay", aliases=["p"], help="Give beans to somebody", brief="Give beans to somebody")
     async def pay(self, ctx, user: discord.User, amount: int):
