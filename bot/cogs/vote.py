@@ -1,3 +1,4 @@
+import random
 import discord
 from discord.ext import commands
 
@@ -9,6 +10,13 @@ class Vote(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
         self.vote_reward = 100
+
+    @commands.Cog.listener()
+    async def on_message(message: discord.Message):
+        vote_reminder_chance = 10
+        
+        if random.randint(0, 1000) <= vote_reminder_chance:
+            await message.channel.send("You can get **100 beans** for free if you vote for me on Top.gg. Do `b.vote` for more info...")
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
