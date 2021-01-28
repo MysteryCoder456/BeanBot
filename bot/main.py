@@ -24,7 +24,8 @@ PREFIX = "b."
 VOTE_REWARD = 100
 
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
-dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
+# TODO: uncomment when top.gg approved
+# dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
 presence_task = None
 running = True
 
@@ -61,7 +62,7 @@ async def update_presence():
 
 @bot.command(name="invite", help="Get the link to invite me to another server", brief="Invite me to another server")
 async def invite(ctx):
-    invite_embed = discord.Embed(title="Bean Bot Invite Link", color=THEME, url="https://discord.com/api/oauth2/authorize?client_id=795564109922959361&permissions=388208&scope=bot")
+    invite_embed = discord.Embed(title="Bean Bot Invite Link", color=THEME, url="https://discord.com/api/oauth2/authorize?client_id=804243703455547462&permissions=537259088&scope=bot")
     invite_embed.add_field(name="Thank you for spreading word about Bean Bot!", value=":D")
 
     await ctx.send(embed=invite_embed)
@@ -117,7 +118,8 @@ if __name__ == "__main__":
         running = False
         time.sleep(5)
         loop.run_until_complete(bot.logout())
-        asyncio.run(dbl_client.close())
+        # TODO: uncomment when top.gg approved
+        # asyncio.run(dbl_client.close())
 
         # Close Database connection
         UserData.conn.commit()
