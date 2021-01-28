@@ -209,3 +209,21 @@ class Currency(commands.Cog):
         )
 
         UserData.conn.commit()
+
+    @commands.group(name="leaderboard", aliases=["lb"], help="Leaderboard for richest people", brief="Leaderboard for richest people")
+    async def leaderboard(self, ctx):
+        await ctx.send("You have to tell me which leaderboard you want to see. Do `b.help leaderboard` for more info.")
+
+    @leaderboard.command(name="global")
+    async def global_leaderboard(self, ctx):
+        UserData.c.execute("SELECT id, wallet FROM users")
+        wallets = [data_entry for data_entry in UserData.c.fetchall() if data_entry[1] != 0]
+        wallets.sort(key=lambda x: x[1], reverse=True)
+
+        lb_embed = discord.Embed(title="Top 10 Global Leaderboard", color=self.theme_color)
+
+        for (i, data_entry) in enumerate(wallets[:10]):
+            user = await self.bot.fetch_user(data_entry[0])
+            lb_embed.add_field(name=f"{i+1}) {user}", value=f"{data_entry[1]} beans", inline=False)
+
+        await ctx.send(embed=lb_embed)
