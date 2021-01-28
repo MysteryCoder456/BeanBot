@@ -210,7 +210,7 @@ class Currency(commands.Cog):
 
         UserData.conn.commit()
 
-    @commands.group(name="leaderboard", aliases=["lb"], help="Leaderboard for richest people", brief="Leaderboard for richest people")
+    @commands.group(name="leaderboard", aliases=["lb"], help="Wallet leaderboard", brief="Wallet leaderboard", invoke_without_command=True)
     async def leaderboard(self, ctx):
         await ctx.send("You have to tell me which leaderboard you want to see. Do `b.help leaderboard` for more info.")
 
