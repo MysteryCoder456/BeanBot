@@ -227,3 +227,19 @@ class Currency(commands.Cog):
             lb_embed.add_field(name=f"{i+1}) {user}", value=f"{data_entry[1]} beans", inline=False)
 
         await ctx.send(embed=lb_embed)
+
+    @leaderboard.command(name="server")
+    async def server_leaderboard(self, ctx):
+        server_user_ids = [member.id async for member in ctx.guild.fetch_members(limit=9999999)]
+
+        UserData.c.execute("SELECT id, wallet FROM users")
+        wallets = [data_entry for data_entry in UserData.c.fetchall() if data_entry[1] != 0 and data_entry[0] in server_user_ids]
+        wallets.sort(key=lambda x: x[1], reverse=True)
+
+        lb_embed = discord.Embed(title="Top 10 Server Leaderboard", color=self.theme_color)
+
+        for (i, data_entry) in enumerate(wallets[:10]):
+            user = await self.bot.fetch_user(data_entry[0])
+            lb_embed.add_field(name=f"{i+1}) {user}", value=f"{data_entry[1]} beans", inline=False)
+
+        await ctx.send(embed=lb_embed)
