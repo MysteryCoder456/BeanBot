@@ -209,5 +209,3 @@ class Currency(commands.Cog):
         )
 
         UserData.conn.commit()
-
-
