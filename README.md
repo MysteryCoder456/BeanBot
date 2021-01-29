@@ -16,5 +16,8 @@ Earning money is fun, stealing it is even more fun. But when you're stolen from 
 ## Image Commands
 Generate your own memes using the Image commands. Making memes with Bean Bot is statistically proven to get more updoots on Reddit, just saying...
 
+## Word Tracking
+Add words to be tracked so you can see how many times it has been said in the entire server. Great for being BadBoyHalo ;)
+
 ## Shop
 Speaking of buying from the shops, you can buy a variety of items from the shop that can do different things.
