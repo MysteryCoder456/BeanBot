@@ -114,3 +114,18 @@ class Words(commands.Cog):
             return
 
         await ctx.send(f"The word **{word}** has been said **{word_count} times**!")
+
+    @commands.command(name="viewtrackedwords", aliases=["vtw"], help="View all the words being tracked", brief="See all tracked words")
+    async def viewtrackedwords(self, ctx):
+        Data.check_guild_entry(ctx.guild)
+        guild_id = ctx.guild.id
+
+        Data.c.execute("SELECT tracked_words FROM guilds WHERE id = :guild_id", {"guild_id": ctx.guild.id})
+        self.tracked_words[guild_id] = json.loads(Data.c.fetchone()[0])
+
+        if len(self.tracked_words[guild_id]) > 0:
+            await ctx.send("These are the words currently being tracked:")
+            words_string = "\n".join([f"**{i+1}) {word}**: {self.tracked_words[guild_id][word]}" for (i, word) in enumerate(self.tracked_words[guild_id])])
+            await ctx.send(words_string)
+        else:
+            await ctx.send("There aren't any words being tracked on this server...")
