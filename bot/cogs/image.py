@@ -17,7 +17,7 @@ class Image(commands.Cog):
             os.mkdir(os.path.join(self.images_dir, "cache"))
 
     @commands.command(name="abandon", help="Baby abandon meme", brief="Baby abandon meme")
-    async def abandon(self, ctx, *, text):
+    async def abandon(self, ctx, *, text: str):
         img_path = os.path.join(self.images_dir, "abandon.jpg")
         font_path = os.path.join(self.fonts_dir, "Arial.ttf")
         image = PIL.Image.open(img_path)

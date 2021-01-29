@@ -13,6 +13,7 @@ from cogs.jobs import Jobs
 from cogs.shop import Shop
 from cogs.fun import Fun
 from cogs.image import Image
+from cogs.words import Words
 from cogs.vote import Vote
 from cogs.owner import Owner
 
@@ -23,7 +24,11 @@ THEME = discord.Color.green()
 PREFIX = "b."
 VOTE_REWARD = 100
 
-bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.")
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+
+bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.", intents=intents)
 # TODO: uncomment when top.gg approved
 # dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
 presence_task = None
@@ -34,6 +39,7 @@ bot.add_cog(Jobs(bot, THEME))
 bot.add_cog(Shop(bot, THEME))
 bot.add_cog(Fun(bot, THEME))
 bot.add_cog(Image(bot, THEME))
+bot.add_cog(Words(bot, THEME))
 bot.add_cog(Vote(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
