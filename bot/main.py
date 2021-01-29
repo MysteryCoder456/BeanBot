@@ -76,13 +76,13 @@ async def invite(ctx):
 
 @bot.event
 async def on_command_error(ctx, exception):
-    if isinstance(exception, commands.errors.CommandOnCooldown):
+    if isinstance(exception, commands.CommandOnCooldown):
         await ctx.send(f"Chill out bean bro, try again in {exception.retry_after} seconds...")
 
     elif isinstance(exception, commands.errors.MissingRequiredArgument):
         await ctx.send(f"`{exception.param.name}` is a required input.")
 
-    elif isinstance(exception, commands.errors.CommandNotFound):
+    elif isinstance(exception, commands.CommandNotFound):
         cmd_used = str(ctx.invoked_with)
 
         if cmd_used.endswith("rate"):
@@ -97,6 +97,13 @@ async def on_command_error(ctx, exception):
 
         else:
             await ctx.send("That's not a real command...")
+
+    elif isinstance(exception, commands.MissingPermissions):
+        await ctx.send("You don't have permission to run this command. You need the following permissions:")
+
+        for missing_perm in exception.missing_perms:
+            await ctx.send(missing_perm)
+
     else:
         raise exception
 

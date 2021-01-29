@@ -10,6 +10,7 @@ class Words(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
 
+    @commands.has_guild_permissions(manage_messages=True)
     @commands.command(name="trackword", aliases=["tw"], help="Track how many times a word has been used", brief="Track a word's usage")
     async def trackword(self, ctx, word: str):
         Data.check_guild_entry(ctx.guild)
