@@ -4,7 +4,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 
 class Jobs(commands.Cog):
@@ -18,11 +18,11 @@ class Jobs(commands.Cog):
 
     @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")
     async def myjob(self, ctx):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
         # Get the user's job_id
-        UserData.c.execute("SELECT job_id FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        job_id = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT job_id FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        job_id = Data.c.fetchone()[0]
 
         if job_id == 0:
             await ctx.send("You're unemployed bro. Get a job...")
@@ -53,15 +53,15 @@ class Jobs(commands.Cog):
 
     @commands.command(name="takejob", aliases=["tj"], help="Take up an available job", brief="Take up a job")
     async def takejob(self, ctx, *, job_name: str):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
         jn = None
         js = None
         jr = None
 
         # Get current work streak
-        UserData.c.execute("SELECT job_streak FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        current_streak = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT job_streak FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        current_streak = Data.c.fetchone()[0]
 
         for (job_id, job) in enumerate(self.jobs_data):
             if job["name"].lower() == job_name.lower():
@@ -74,8 +74,8 @@ class Jobs(commands.Cog):
                     return
 
                 # Set user's job_id to specified job
-                UserData.c.execute("UPDATE users SET job_id = :job_id WHERE id = :user_id", {"job_id": job_id, "user_id": ctx.author.id})
-                UserData.conn.commit()
+                Data.c.execute("UPDATE users SET job_id = :job_id WHERE id = :user_id", {"job_id": job_id, "user_id": ctx.author.id})
+                Data.conn.commit()
                 break
 
         if jn is None or js is None or jr is None:
@@ -88,10 +88,10 @@ class Jobs(commands.Cog):
 
     @commands.command(name="work", aliases=["w"], help="Go to work and earn beans. Usable once per day", brief="Earn some beans")
     async def work(self, ctx):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT wallet, job_id, job_streak, last_work_date FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT wallet, job_id, job_streak, last_work_date FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = Data.c.fetchone()
 
         current_balance = data[0]
         job_id = data[1]
@@ -123,7 +123,7 @@ class Jobs(commands.Cog):
 
             return
 
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_amount, job_streak = :new_streak, last_work_date = :new_lwd WHERE id = :user_id",
             {
                 "new_amount": current_balance + salary,
@@ -133,5 +133,5 @@ class Jobs(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
         await ctx.send(f"You finished a day's worth of work and feel satisfied! You earned **{salary} beans** and you're on a **{new_streak} day** streak!")

@@ -6,7 +6,7 @@ import math
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 
 class Fun(commands.Cog):
@@ -31,10 +31,10 @@ class Fun(commands.Cog):
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend", brief="Gamble some money")
     async def gamble(self, ctx, amount: int):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        wallet = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        wallet = Data.c.fetchone()[0]
 
         if amount > wallet:
             amount_needed = amount - wallet
@@ -51,14 +51,14 @@ class Fun(commands.Cog):
         else:
             amount_won = 0
 
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
             {
                 "new_wallet": wallet + amount_won,
                 "user_id": ctx.author.id
             }
         )
-        UserData.conn.commit()
+        Data.conn.commit()
 
         gamble_embed = discord.Embed(title="Gambling Results")
 

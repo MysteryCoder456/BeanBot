@@ -3,7 +3,7 @@ import json
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 
 class Shop(commands.Cog):
@@ -32,10 +32,10 @@ class Shop(commands.Cog):
 
     @commands.command(name="buy", help="Purchase an item from the shop", brief="Buy from the shop")
     async def buy(self, ctx, quantity: int, *, item_name):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT wallet, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT wallet, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = Data.c.fetchone()
         wallet_amount = data[0]
         inventory = json.loads(data[1])
 
@@ -78,7 +78,7 @@ class Shop(commands.Cog):
             }
             inventory.append(inventory_entry)
 
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET inventory = :new_json WHERE id = :user_id",
             {
                 "new_json": json.dumps(inventory),
@@ -86,7 +86,7 @@ class Shop(commands.Cog):
             }
         )
 
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
                 "new_amount": wallet_amount - total_price,
@@ -94,7 +94,7 @@ class Shop(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
 
         if quantity > 1:
             await ctx.send(f"You bought **{quantity} {item_n}s** for **{total_price} beans**!")
@@ -106,10 +106,10 @@ class Shop(commands.Cog):
         if user is None:
             user = ctx.author
 
-        UserData.check_user_entry(user)
+        Data.check_user_entry(user)
 
-        UserData.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": user.id})
-        inventory = json.loads(UserData.c.fetchone()[0])
+        Data.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": user.id})
+        inventory = json.loads(Data.c.fetchone()[0])
 
         inventory_embed = discord.Embed(title=f"{user.display_name}'s Inventory", color=self.theme_color)
 
@@ -123,10 +123,10 @@ class Shop(commands.Cog):
 
     @commands.command(name="use", help="Use an item in your inventory", brief="Use an item in your inventory")
     async def use(self, ctx, *, item_name):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
-        UserData.c.execute("SELECT bank_capacity, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT bank_capacity, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = Data.c.fetchone()
         bank_capacity = data[0]
         inventory = json.loads(data[1])
 
@@ -156,7 +156,7 @@ class Shop(commands.Cog):
 
             if f_id == 0:
                 bank_capacity += f_vars["bank_capacity_increase"]
-                UserData.c.execute(
+                Data.c.execute(
                     "UPDATE users SET bank_capacity = :new_capacity WHERE id = :user_id",
                     {
                         "new_capacity": bank_capacity,
@@ -165,14 +165,14 @@ class Shop(commands.Cog):
                 )
 
         # Write inventory changes to DB
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET inventory = :new_inventory WHERE id = :user_id",
             {
                 "new_inventory": json.dumps(inventory),
                 "user_id": ctx.author.id
             }
         )
-        UserData.conn.commit()
+        Data.conn.commit()
 
         item_n = item_info["name"]
 

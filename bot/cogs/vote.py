@@ -2,7 +2,7 @@ import random
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 
 class Vote(commands.Cog):
@@ -16,24 +16,24 @@ class Vote(commands.Cog):
     # async def on_dbl_vote(self, data):
     #     if data["type"] == "upvote":
     #         user = self.bot.get_user(int(data["user"]))
-    #         UserData.check_user_entry(user)
+    #         Data.check_user_entry(user)
     #         print(f"{user} has upvoted the bot on Top.gg")
     #         try:
     #             await user.send(f"Thank you for voting for me on Top.gg. You have gotten {self.vote_reward} beans as a gift!")
     #         except discord.errors.Forbidden:
     #             print(f"Couldn't send a message to {user}")
 
-    #         UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
-    #         wallet = UserData.c.fetchone()[0]
+    #         Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
+    #         wallet = Data.c.fetchone()[0]
 
-    #         UserData.c.execute(
+    #         Data.c.execute(
     #             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
     #             {
     #                 "new_amount": wallet + self.vote_reward,
     #                 "user_id": user.id
     #             }
     #         )
-    #         UserData.conn.commit()
+    #         Data.conn.commit()
 
     @commands.command(name="vote", help="Get links to Bot List sites where you can vote for me", brief="Help me grow")
     async def vote(self, ctx):

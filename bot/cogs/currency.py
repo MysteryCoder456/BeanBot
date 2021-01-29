@@ -2,7 +2,7 @@ import random
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 
 class Currency(commands.Cog):
@@ -15,10 +15,10 @@ class Currency(commands.Cog):
         if user is None:
             user = ctx.author
 
-        UserData.check_user_entry(user)
+        Data.check_user_entry(user)
 
-        UserData.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": user.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": user.id})
+        data = Data.c.fetchone()
         wallet = data[0]
         bank = data[1]
         bank_capacity = data[2]
@@ -38,15 +38,15 @@ class Currency(commands.Cog):
             await ctx.send("You can't trick me into taking away their money fool!")
             return
 
-        UserData.check_user_entry(ctx.author)
-        UserData.check_user_entry(user)
+        Data.check_user_entry(ctx.author)
+        Data.check_user_entry(user)
 
         # Get current wallet balances
-        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        current_balance = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        current_balance = Data.c.fetchone()[0]
 
-        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
-        current_reciever_balance = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
+        current_reciever_balance = Data.c.fetchone()[0]
 
         # Ensure user has enough to pay
         if amount > current_balance:
@@ -55,14 +55,14 @@ class Currency(commands.Cog):
             return
 
         # Update balances
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
                 "new_amount": current_balance - amount,
                 "user_id": ctx.author.id
             }
         )
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
                 "new_amount": current_reciever_balance + amount,
@@ -70,17 +70,17 @@ class Currency(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
 
         await ctx.send(f"You paid **{amount} beans** to {user.display_name}.")
 
     @commands.command(name="deposit", aliases=["dep"], help="Deposit beans to your bank where they will stay safe", brief="Deposit beans to bank")
     async def deposit(self, ctx, amount):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
         # Get current wallet and banks balances
-        UserData.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT wallet, bank, bank_capacity FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = Data.c.fetchone()
         wallet_amount = data[0]
         bank_amount = data[1]
         bank_capacity = data[2]
@@ -114,7 +114,7 @@ class Currency(commands.Cog):
             # Ensure user doesn't go over the capacity
 
         # Update balances
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_wallet_amount, bank = :new_bank_amount WHERE id = :user_id",
             {
                 "new_wallet_amount": wallet_amount - amount,
@@ -123,16 +123,16 @@ class Currency(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
         await ctx.send(f"You deposited **{amount} beans** to your bank.")
 
     @commands.command(name="withdraw", aliases=["with"], help="Withdraw beans from your bank when you want to use them", brief="Withdraw beans from bank")
     async def withdraw(self, ctx, amount):
-        UserData.check_user_entry(ctx.author)
+        Data.check_user_entry(ctx.author)
 
         # Get current wallet and banks balances
-        UserData.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        data = UserData.c.fetchone()
+        Data.c.execute("SELECT wallet, bank FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        data = Data.c.fetchone()
         wallet_amount = data[0]
         bank_amount = data[1]
 
@@ -154,7 +154,7 @@ class Currency(commands.Cog):
                 return
 
         # Update balances
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_wallet_amount, bank = :new_bank_amount WHERE id = :user_id",
             {
                 "new_wallet_amount": wallet_amount + amount,
@@ -163,21 +163,21 @@ class Currency(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
         await ctx.send(f"You withdrew **{amount} beans** from your bank.")
 
 
     @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling", brief="\"Borrow\" some money")
     @commands.cooldown(1, 120)
     async def rob(self, ctx, victim: discord.Member):
-        UserData.check_user_entry(ctx.author)
-        UserData.check_user_entry(victim)
+        Data.check_user_entry(ctx.author)
+        Data.check_user_entry(victim)
 
-        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
-        robber_wallet = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        robber_wallet = Data.c.fetchone()[0]
 
-        UserData.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": victim.id})
-        victim_wallet = UserData.c.fetchone()[0]
+        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": victim.id})
+        victim_wallet = Data.c.fetchone()[0]
 
         if robber_wallet < 150:
             amount_needed = 150 - robber_wallet
@@ -193,14 +193,14 @@ class Currency(commands.Cog):
             amount_stolen = random.randint(-150, -70)
             await ctx.send(f"You got caught stealing from **{victim.display_name}** and had to pay them **{abs(amount_stolen)} beans**")
 
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
             {
                 "new_wallet": robber_wallet + amount_stolen,
                 "user_id": ctx.author.id
             }
         )
-        UserData.c.execute(
+        Data.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
             {
                 "new_wallet": victim_wallet - amount_stolen,
@@ -208,7 +208,7 @@ class Currency(commands.Cog):
             }
         )
 
-        UserData.conn.commit()
+        Data.conn.commit()
 
     @commands.group(name="leaderboard", aliases=["lb"], help="Wallet leaderboard", brief="Wallet leaderboard", invoke_without_command=True)
     async def leaderboard(self, ctx):
@@ -216,8 +216,8 @@ class Currency(commands.Cog):
 
     @leaderboard.command(name="global")
     async def global_leaderboard(self, ctx):
-        UserData.c.execute("SELECT id, wallet FROM users")
-        wallets = [data_entry for data_entry in UserData.c.fetchall() if data_entry[1] != 0]
+        Data.c.execute("SELECT id, wallet FROM users")
+        wallets = [data_entry for data_entry in Data.c.fetchall() if data_entry[1] != 0]
         wallets.sort(key=lambda x: x[1], reverse=True)
 
         lb_embed = discord.Embed(title="Top 10 Global Leaderboard", color=self.theme_color)
@@ -232,8 +232,8 @@ class Currency(commands.Cog):
     async def server_leaderboard(self, ctx):
         server_user_ids = [member.id async for member in ctx.guild.fetch_members(limit=9999999)]
 
-        UserData.c.execute("SELECT id, wallet FROM users")
-        wallets = [data_entry for data_entry in UserData.c.fetchall() if data_entry[1] != 0 and data_entry[0] in server_user_ids]
+        Data.c.execute("SELECT id, wallet FROM users")
+        wallets = [data_entry for data_entry in Data.c.fetchall() if data_entry[1] != 0 and data_entry[0] in server_user_ids]
         wallets.sort(key=lambda x: x[1], reverse=True)
 
         lb_embed = discord.Embed(title="Top 10 Server Leaderboard", color=self.theme_color)

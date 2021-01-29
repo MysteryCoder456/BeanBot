@@ -6,7 +6,7 @@ import dbl
 import discord
 from discord.ext import commands
 
-from data import UserData
+from data import Data
 
 from cogs.currency import Currency
 from cogs.jobs import Jobs
@@ -98,7 +98,7 @@ async def on_command_error(ctx, exception):
 @bot.event
 async def on_ready():
     global presence_task
-    UserData.create_tables()
+    Data.create_tables()
     presence_task = bot.loop.create_task(update_presence())
     print(f"Bot logged into {len(bot.guilds)} servers.")
 
@@ -122,6 +122,6 @@ if __name__ == "__main__":
         # asyncio.run(dbl_client.close())
 
         # Close Database connection
-        UserData.conn.commit()
-        UserData.c.close()
-        UserData.conn.close()
+        Data.conn.commit()
+        Data.c.close()
+        Data.conn.close()
