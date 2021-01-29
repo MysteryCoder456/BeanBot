@@ -35,3 +35,20 @@ class Words(commands.Cog):
         Data.conn.commit()
 
         await ctx.send(f"The word **{word}** is now being tracked!")
+
+    @commands.command(name="viewwordcount", aliases=["vwc"], help="View how many times a word has been said", brief="See a word's usage")
+    async def viewwordcount(self, ctx, word: str = None):
+        Data.check_guild_entry(ctx.guild)
+
+        word = word.strip()
+
+        Data.c.execute("SELECT tracked_words FROM guilds WHERE id = :guild_id", {"guild_id": ctx.guild.id})
+        tracked_words = json.loads(Data.c.fetchone()[0])
+
+        try:
+            word_count = tracked_words[word]
+        except KeyError:
+            await ctx.send("This word is not being tracked...")
+            return
+
+        await ctx.send(f"The word **{word}** has been said **{word_count} times**!")
