@@ -116,6 +116,25 @@ async def on_ready():
     print(f"Bot logged into {len(bot.guilds)} servers.")
 
 
+@bot.event
+async def on_guild_join(guild):
+    bean_server_id = 797019569037639693
+    log_channel_id = 804951646173790208
+    tester_role_id = 804770607002681405
+
+    bean_server = bot.get_guild(bean_server_id)
+    log_channel = bean_server.get_channel(log_channel_id)
+    tester_role = bean_server.get_role(tester_role_id)
+
+    guild_owner = bean_server.get_member(guild.owner_id)
+    try:
+        await guild_owner.add_roles(tester_role)
+    except AttributeError:
+        guild_owner = "Owner Not Found"
+
+    await log_channel.send(f"Bean Bot joined server: **{guild.name}**\nOwner: **{guild_owner}**")
+
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
