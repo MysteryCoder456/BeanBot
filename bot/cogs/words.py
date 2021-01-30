@@ -29,7 +29,7 @@ class Words(commands.Cog):
         try:
             for word in self.tracked_words[guild_id]:
                 if word in message.content:
-                    self.tracked_words[guild_id][word] += 1
+                    self.tracked_words[guild_id][word] += message.content.count(word)
                     Data.c.execute(
                         "UPDATE guilds SET tracked_words = :new_words WHERE id = :guild_id",
                         {
