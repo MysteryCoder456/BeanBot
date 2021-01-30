@@ -127,10 +127,11 @@ async def on_guild_join(guild):
     tester_role = bean_server.get_role(tester_role_id)
 
     guild_owner = bean_server.get_member(guild.owner_id)
-    try:
+
+    if guild_owner is None:
+        guild_owner = guild.owner
+    else:
         await guild_owner.add_roles(tester_role)
-    except AttributeError:
-        guild_owner = "Owner Not Found"
 
     await log_channel.send(f"Bean Bot joined server: **{guild.name}**\nOwner: **{guild_owner}**")
 
