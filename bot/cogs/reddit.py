@@ -40,13 +40,9 @@ class Reddit(commands.Cog):
 
         post = next(listing)
 
-        if not ctx.channel.is_nsfw():
-            if subred.over18:
-                await ctx.send("This subreddit is marked NSFW. Please set this channel to NSFW to view this subreddit.")
-                return
-
-            while not post.over_18:
-                post = next(listing)
+        if subred.over18 and not ctx.channel.is_nsfw():
+            await ctx.send("This subreddit is marked NSFW. Please set this channel to NSFW to view this subreddit.")
+            return
 
         post_embed = discord.Embed(title=post.title, color=self.theme_color, url=post.url)
         if post.selftext == "":
