@@ -43,7 +43,7 @@ class Image(commands.Cog):
         await ctx.send(file=discord.File(cache_filename))
 
     @commands.command(name="slap", help="Batman slap meme", brief="Batman slap meme")
-    async def slap(self, ctx, person1: discord.User, person2: discord.User = None):
+    async def slap(self, ctx, person1: discord.User, person2: discord.User = None, *, text: str = None):
         if person2 is None:
             slapper = ctx.author
             victim = person1
@@ -65,13 +65,25 @@ class Image(commands.Cog):
         image.paste(pfp1, (457, 304))
         image.paste(pfp2, (202, 412))
 
+        if text is not None:
+            text_split = text.split(",")
+            text1 = text_split[0]
+            text2 = text_split[1]
+            font_path = os.path.join(self.fonts_dir, "Comic Sans MS.ttf")
+
+            draw = ImageDraw.Draw(image)
+            font = ImageFont.truetype(font=font_path, size=21)
+
+            draw.text((362, 46), text1, fill=(0, 0, 0), font=font)
+            draw.text((10, 24), text2, fill=(0, 0, 0), font=font)
+
         cache_filename = os.path.join(self.images_dir, "cache", "slap.jpg")
         image.save(cache_filename)
 
         await ctx.send(file=discord.File(cache_filename))
 
     @commands.command(name="lick", help="JoJo lick meme", brief="JoJo lick meme")
-    async def lick(self, ctx, person1: discord.User, person2: discord.User=None):
+    async def lick(self, ctx, person1: discord.User, person2: discord.User = None):
         if person2 is None:
             licker = ctx.author
             lickee = person1
