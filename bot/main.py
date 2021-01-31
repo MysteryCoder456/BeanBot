@@ -14,6 +14,7 @@ from cogs.shop import Shop
 from cogs.fun import Fun
 from cogs.image import Image
 from cogs.words import Words
+from cogs.reddit import Reddit
 from cogs.vote import Vote
 from cogs.owner import Owner
 
@@ -40,6 +41,7 @@ bot.add_cog(Shop(bot, THEME))
 bot.add_cog(Fun(bot, THEME))
 bot.add_cog(Image(bot, THEME))
 bot.add_cog(Words(bot, THEME))
+bot.add_cog(Reddit(bot, THEME))
 bot.add_cog(Vote(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
@@ -134,6 +136,26 @@ async def on_guild_join(guild):
         await guild_owner.add_roles(tester_role)
 
     await log_channel.send(f"Bean Bot joined server: **{guild.name}**\nOwner: **{guild_owner}**")
+
+
+@bot.event
+async def on_guild_remove(guild):
+    bean_server_id = 797019569037639693
+    log_channel_id = 804951646173790208
+    tester_role_id = 804770607002681405
+
+    bean_server = bot.get_guild(bean_server_id)
+    log_channel = bean_server.get_channel(log_channel_id)
+    tester_role = bean_server.get_role(tester_role_id)
+
+    guild_owner = bean_server.get_member(guild.owner_id)
+
+    if guild_owner is None:
+        guild_owner = guild.owner
+    else:
+        await guild_owner.remove_roles(tester_role)
+
+    await log_channel.send(f"Bean Bot left server: **{guild.name}**\nOwner: **{guild_owner}**")
 
 
 if __name__ == "__main__":
