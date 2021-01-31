@@ -79,6 +79,9 @@ class Fun(commands.Cog):
 
     @commands.command(name="fight", help="Pick a fight with someone", brief="Pick a fight with someone")
     async def fight(self, ctx, user: discord.User):
+        if ctx.author.id == user.id:
+            await ctx.send("You can't do that to yourself, smh...")
+
         p1_health = 100
         p2_health = 100
         p1_name = ctx.author.display_name

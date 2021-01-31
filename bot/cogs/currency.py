@@ -31,6 +31,9 @@ class Currency(commands.Cog):
 
     @commands.command(name="pay", aliases=["p"], help="Give beans to somebody", brief="Give beans to somebody")
     async def pay(self, ctx, user: discord.User, amount: int):
+        if ctx.author.id == user.id:
+            await ctx.send("You can't do that to yourself, smh...")
+
         if amount == 0:
             await ctx.send("Why are you using this command if you aren't giving them beans?")
             return
@@ -170,6 +173,9 @@ class Currency(commands.Cog):
     @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling", brief="\"Borrow\" some money")
     @commands.cooldown(1, 120)
     async def rob(self, ctx, victim: discord.Member):
+        if ctx.author.id == victim.id:
+            await ctx.send("You can't do that to yourself, smh...")
+
         Data.check_user_entry(ctx.author)
         Data.check_user_entry(victim)
 
