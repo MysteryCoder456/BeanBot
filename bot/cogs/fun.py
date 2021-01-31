@@ -81,6 +81,7 @@ class Fun(commands.Cog):
     async def fight(self, ctx, user: discord.User):
         if ctx.author.id == user.id:
             await ctx.send("You can't do that to yourself, smh...")
+            return
 
         p1_health = 100
         p2_health = 100

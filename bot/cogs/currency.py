@@ -33,6 +33,7 @@ class Currency(commands.Cog):
     async def pay(self, ctx, user: discord.User, amount: int):
         if ctx.author.id == user.id:
             await ctx.send("You can't do that to yourself, smh...")
+            return
 
         if amount == 0:
             await ctx.send("Why are you using this command if you aren't giving them beans?")
@@ -175,6 +176,7 @@ class Currency(commands.Cog):
     async def rob(self, ctx, victim: discord.Member):
         if ctx.author.id == victim.id:
             await ctx.send("You can't do that to yourself, smh...")
+            return
 
         Data.check_user_entry(ctx.author)
         Data.check_user_entry(victim)
