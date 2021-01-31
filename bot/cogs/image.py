@@ -69,3 +69,31 @@ class Image(commands.Cog):
         image.save(cache_filename)
 
         await ctx.send(file=discord.File(cache_filename))
+
+    @commands.command(name="lick", help="JoJo lick meme", brief="JoJo lick meme")
+    async def lick(self, ctx, person1: discord.User, person2: discord.User=None):
+        if person2 is None:
+            licker = ctx.author
+            lickee = person1
+        else:
+            licker = person1
+            lickee = person2
+
+        img_path = os.path.join(self.images_dir, "lick.jpeg")
+        pfp1_path = os.path.join(self.images_dir, "cache", "pfp1.jpg")
+        pfp2_path = os.path.join(self.images_dir, "cache", "pfp2.jpg")
+
+        await licker.avatar_url.save(pfp1_path)
+        await lickee.avatar_url.save(pfp2_path)
+
+        image = PIL.Image.open(img_path)
+        pfp1 = PIL.Image.open(pfp1_path).resize((450, 450))
+        pfp2 = PIL.Image.open(pfp2_path).resize((425, 425))
+
+        image.paste(pfp1, (784, 54))
+        image.paste(pfp2, (171, 85))
+
+        cache_filename = os.path.join(self.images_dir, "cache", "lick.jpg")
+        image.save(cache_filename)
+
+        await ctx.send(file=discord.File(cache_filename))
