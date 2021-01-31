@@ -45,7 +45,11 @@ class Reddit(commands.Cog):
             return
 
         post_embed = discord.Embed(title=post.title, color=self.theme_color, url=post.url)
-        if post.is_self:
+
+        if post.selftext == "":
+            pass
+
+        else:
             post_content = post.selftext
 
             if len(post_content) > 1024:
@@ -53,8 +57,6 @@ class Reddit(commands.Cog):
 
             post_embed.add_field(name="Content", value=post_content, inline=False)
 
-        else:
-            pass  # TODO: add image posts
         post_embed.add_field(name="Score", value=post.score)
         post_embed.set_footer(text=f"Post by u/{post.author}")
 
