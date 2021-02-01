@@ -10,7 +10,7 @@ class Currency(commands.Cog):
         self.bot = bot
         self.theme_color = theme_color
 
-    @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has", brief="Check your beans")
+    @commands.command(name="balance", aliases=["bal", "b"], help="Check how many beans someone has")
     async def balance(self, ctx, user: discord.User = None):
         if user is None:
             user = ctx.author
@@ -29,7 +29,7 @@ class Currency(commands.Cog):
 
         await ctx.send("You can get beans for free if you vote for me on Top.gg. Do `b.vote` for more info...", embed=embed)
 
-    @commands.command(name="pay", aliases=["p"], help="Give beans to somebody", brief="Give beans to somebody")
+    @commands.command(name="pay", aliases=["p"], help="Give beans to somebody")
     async def pay(self, ctx, user: discord.User, amount: int):
         if ctx.author.id == user.id:
             await ctx.send("You can't do that to yourself, smh...")
@@ -78,7 +78,7 @@ class Currency(commands.Cog):
 
         await ctx.send(f"You paid **{amount} beans** to {user.display_name}.")
 
-    @commands.command(name="deposit", aliases=["dep"], help="Deposit beans to your bank where they will stay safe", brief="Deposit beans to bank")
+    @commands.command(name="deposit", aliases=["dep"], help="Deposit beans to your bank where they will stay safe")
     async def deposit(self, ctx, amount):
         Data.check_user_entry(ctx.author)
 
@@ -130,7 +130,7 @@ class Currency(commands.Cog):
         Data.conn.commit()
         await ctx.send(f"You deposited **{amount} beans** to your bank.")
 
-    @commands.command(name="withdraw", aliases=["with"], help="Withdraw beans from your bank when you want to use them", brief="Withdraw beans from bank")
+    @commands.command(name="withdraw", aliases=["with"], help="Withdraw beans from your bank when you want to use them")
     async def withdraw(self, ctx, amount):
         Data.check_user_entry(ctx.author)
 
@@ -171,7 +171,7 @@ class Currency(commands.Cog):
         await ctx.send(f"You withdrew **{amount} beans** from your bank.")
 
 
-    @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling", brief="\"Borrow\" some money")
+    @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling")
     @commands.cooldown(1, 120)
     async def rob(self, ctx, victim: discord.Member):
         if ctx.author.id == victim.id:
@@ -218,7 +218,7 @@ class Currency(commands.Cog):
 
         Data.conn.commit()
 
-    @commands.group(name="leaderboard", aliases=["lb"], help="Wallet leaderboard", brief="Wallet leaderboard", invoke_without_command=True)
+    @commands.group(name="leaderboard", aliases=["lb"], help="Wallet leaderboard", invoke_without_command=True)
     async def leaderboard(self, ctx):
         await ctx.send("You have to tell me which leaderboard you want to see. Do `b.help leaderboard` for more info.")
 

@@ -42,7 +42,7 @@ class Words(commands.Cog):
             self.tracked_words[guild_id] = {}
 
     @commands.has_guild_permissions(manage_messages=True)
-    @commands.command(name="trackword", aliases=["tw"], help="Track how many times a word has been used", brief="Track a word's usage")
+    @commands.command(name="trackword", aliases=["tw"], help="Track how many times a word has been used")
     async def trackword(self, ctx, *, word: str):
         Data.check_guild_entry(ctx.guild)
         guild_id = ctx.guild.id
@@ -70,7 +70,7 @@ class Words(commands.Cog):
         await ctx.send(f"The word **{word}** is now being tracked!")
 
     @commands.has_guild_permissions(manage_messages=True)
-    @commands.command(name="untrackword", aliases=["utw"], help="Untrack a word", brief="Untrack a word")
+    @commands.command(name="untrackword", aliases=["utw"], help="Untrack a word")
     async def untrackword(self, ctx, *, word: str):
         Data.check_guild_entry(ctx.guild)
         guild_id = ctx.guild.id
@@ -97,7 +97,7 @@ class Words(commands.Cog):
 
         await ctx.send(f"The word **{word}** is no longer being tracked!")
 
-    @commands.command(name="viewwordcount", aliases=["vwc"], help="View how many times a word has been said", brief="See a word's usage")
+    @commands.command(name="viewwordcount", aliases=["vwc"], help="View how many times a word has been said")
     async def viewwordcount(self, ctx, *, word: str):
         Data.check_guild_entry(ctx.guild)
         guild_id = ctx.guild.id
@@ -115,7 +115,7 @@ class Words(commands.Cog):
 
         await ctx.send(f"The word **{word}** has been said **{word_count} times**!")
 
-    @commands.command(name="viewtrackedwords", aliases=["vtw"], help="View all the words being tracked", brief="See all tracked words")
+    @commands.command(name="viewtrackedwords", aliases=["vtw"], help="View all the words being tracked")
     async def viewtrackedwords(self, ctx):
         Data.check_guild_entry(ctx.guild)
         guild_id = ctx.guild.id

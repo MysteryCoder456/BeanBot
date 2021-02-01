@@ -17,7 +17,7 @@ class Shop(commands.Cog):
 
         self.is_vowel = lambda ch: (ch in ('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'))
 
-    @commands.command(name="shop", help="List the available items in the shop", brief="List buyable items")
+    @commands.command(name="shop", help="List the available items in the shop")
     async def shop(self, ctx):
         shop_embed = discord.Embed(title="The Bean Shop", color=self.theme_color)
 
@@ -30,7 +30,7 @@ class Shop(commands.Cog):
 
         await ctx.send(embed=shop_embed)
 
-    @commands.command(name="buy", help="Purchase an item from the shop", brief="Buy from the shop")
+    @commands.command(name="buy", help="Purchase an item from the shop")
     async def buy(self, ctx, quantity: int, *, item_name):
         Data.check_user_entry(ctx.author)
 
@@ -101,7 +101,7 @@ class Shop(commands.Cog):
         else:
             await ctx.send(f"You bought **{item_n}** for **{total_price} beans**!")
 
-    @commands.command(name="inventory", aliases=["inv"], help="List all the items in your inventory", brief="View your inventory")
+    @commands.command(name="inventory", aliases=["inv"], help="List all the items in your inventory")
     async def inventory(self, ctx, user: discord.Member = None):
         if user is None:
             user = ctx.author
@@ -121,7 +121,7 @@ class Shop(commands.Cog):
 
         await ctx.send(embed=inventory_embed)
 
-    @commands.command(name="use", help="Use an item in your inventory", brief="Use an item in your inventory")
+    @commands.command(name="use", help="Use an item in your inventory")
     async def use(self, ctx, *, item_name):
         Data.check_user_entry(ctx.author)
 

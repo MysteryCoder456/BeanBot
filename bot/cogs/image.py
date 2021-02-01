@@ -16,7 +16,7 @@ class Image(commands.Cog):
         if "cache" not in os.listdir(self.images_dir):
             os.mkdir(os.path.join(self.images_dir, "cache"))
 
-    @commands.command(name="abandon", help="Baby abandon meme", brief="Baby abandon meme")
+    @commands.command(name="abandon", help="Baby abandon meme")
     async def abandon(self, ctx, *, text: str):
         img_path = os.path.join(self.images_dir, "abandon.jpg")
         font_path = os.path.join(self.fonts_dir, "Arial.ttf")
@@ -42,7 +42,7 @@ class Image(commands.Cog):
 
         await ctx.send(file=discord.File(cache_filename))
 
-    @commands.command(name="slap", help="Batman slap meme", brief="Batman slap meme")
+    @commands.command(name="slap", help="Batman slap meme")
     async def slap(self, ctx, person1: discord.User, person2: discord.User = None, *, text: str = None):
         if person2 is None:
             slapper = ctx.author
@@ -82,7 +82,7 @@ class Image(commands.Cog):
 
         await ctx.send(file=discord.File(cache_filename))
 
-    @commands.command(name="lick", help="JoJo lick meme", brief="JoJo lick meme")
+    @commands.command(name="lick", help="JoJo lick meme")
     async def lick(self, ctx, person1: discord.User, person2: discord.User = None):
         if person2 is None:
             licker = ctx.author

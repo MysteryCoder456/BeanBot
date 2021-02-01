@@ -16,7 +16,7 @@ class Jobs(commands.Cog):
         with open(os.path.join(data_dir, "jobs_data.json"), "r") as jobs_file:
             self.jobs_data = json.load(jobs_file)
 
-    @commands.command(name="myjob", aliases=["mj"], help="Shows your current job", brief="Shows your current job")
+    @commands.command(name="myjob", aliases=["mj"], help="Shows your current job")
     async def myjob(self, ctx):
         Data.check_user_entry(ctx.author)
 
@@ -38,7 +38,7 @@ class Jobs(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="joblist", aliases=["jl", "jobs"], help="List the jobs that you can take", brief="List available jobs")
+    @commands.command(name="joblist", aliases=["jl", "jobs"], help="List the jobs that you can take")
     async def jobslist(self, ctx):
         jobs_embed = discord.Embed(title="Available Jobs", color=self.theme_color)
 
@@ -51,7 +51,7 @@ class Jobs(commands.Cog):
 
         await ctx.send(embed=jobs_embed)
 
-    @commands.command(name="takejob", aliases=["tj"], help="Take up an available job", brief="Take up a job")
+    @commands.command(name="takejob", aliases=["tj"], help="Take up an available job")
     async def takejob(self, ctx, *, job_name: str):
         Data.check_user_entry(ctx.author)
 
@@ -86,7 +86,7 @@ class Jobs(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(name="work", aliases=["w"], help="Go to work and earn beans. Usable once per day", brief="Earn some beans")
+    @commands.command(name="work", aliases=["w"], help="Go to work and earn beans. Usable once per day")
     async def work(self, ctx):
         Data.check_user_entry(ctx.author)
 

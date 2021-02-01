@@ -29,7 +29,7 @@ class Fun(commands.Cog):
     async def on_message_edit(self, before, after):
         self.edited_msgs[str(before.channel.id)] = before
 
-    @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend", brief="Gamble some money")
+    @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend")
     async def gamble(self, ctx, amount: int):
         Data.check_user_entry(ctx.author)
 
@@ -77,7 +77,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=gamble_embed)
 
-    @commands.command(name="fight", help="Pick a fight with someone", brief="Pick a fight with someone")
+    @commands.command(name="fight", help="Pick a fight with someone")
     async def fight(self, ctx, user: discord.User):
         if ctx.author.id == user.id:
             await ctx.send("You can't do that to yourself, smh...")
@@ -204,14 +204,14 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
 
-    @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations", brief="Pray to the Bean Gods")
+    @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations")
     async def pray(self, ctx, *, prayer=None):
         if prayer is None:
             prayer = random.choice(self.beanlations)
 
         await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
 
-    @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message", brief="See a recently deleted message")
+    @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message")
     async def snipe(self, ctx):
         msg = self.deleted_msgs[str(ctx.channel.id)]
 
@@ -221,7 +221,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=snipe_embed)
 
-    @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message", brief="See a recently edited message")
+    @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message")
     async def editsnipe(self, ctx):
         msg = self.edited_msgs[str(ctx.channel.id)]
 
