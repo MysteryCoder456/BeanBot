@@ -1,4 +1,5 @@
 import os
+import random
 import praw
 import discord
 from discord.ext import commands
@@ -25,20 +26,21 @@ class Reddit(commands.Cog):
         listing = None
 
         if category == "top":
-            listing = subred.top(limit=5)
+            listing = subred.top(limit=10)
         elif category == "hot":
-            listing = subred.hot(limit=5)
+            listing = subred.hot(limit=10)
         elif category == "controversial":
-            listing = subred.controversial(limit=5)
+            listing = subred.controversial(limit=10)
         elif category == "new":
-            listing = subred.new(limit=5)
+            listing = subred.new(limit=10)
         elif category == "gilded":
-            listing = subred.gilded(limit=5)
+            listing = subred.gilded(limit=10)
         else:
             await ctx.send("That category is non-existent, just like your common sense smh...")
             return
 
-        post = next(listing)
+        all_posts = [submission for submission in listing]
+        post = random.choice(all_posts)
 
         if subred.over18 and not ctx.channel.is_nsfw():
             await ctx.send("This subreddit is marked NSFW. Please set this channel to NSFW to view this subreddit.")
@@ -47,7 +49,8 @@ class Reddit(commands.Cog):
         post_embed = discord.Embed(title=post.title, color=self.theme_color, url=post.url)
 
         if post.selftext == "":
-            pass
+            if not post.is_self:
+                post_embed.set_image(url=post.url)
 
         else:
             post_content = post.selftext
