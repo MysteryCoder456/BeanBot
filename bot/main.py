@@ -46,6 +46,18 @@ bot.add_cog(Vote(bot, THEME))
 bot.add_cog(Owner(bot, THEME))
 
 
+class HelpCommand(commands.MinimalHelpCommand):
+    async def send_pages(self):
+        destination = self.get_destination()
+        e = discord.Embed(color=THEME, description='')
+        for page in self.paginator.pages:
+            e.description += page
+        await destination.send(embed=e)
+
+
+bot.help_command = HelpCommand()
+
+
 async def update_presence():
     while running:
         activity = discord.Activity(type=discord.ActivityType.playing, name="with the beans!")
