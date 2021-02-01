@@ -92,7 +92,7 @@ class Reddit(commands.Cog):
         all_posts = [submission for submission in listing]
         post = random.choice(all_posts)
 
-        post_embed = discord.Embed(title=post.title, color=self.theme_color, url=f"https://www.reddit.com/{post.permalink}")
+        post_embed = discord.Embed(title=post.title, color=self.theme_color, url=f"https://new.reddit.com{post.permalink}")
 
         if post.selftext == "":
             if not post.is_self:
