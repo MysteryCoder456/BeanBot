@@ -2,7 +2,7 @@ import random
 import discord
 from discord.ext import commands
 
-from data import Data
+from bot.data import Data
 
 
 class Currency(commands.Cog):
@@ -221,6 +221,11 @@ class Currency(commands.Cog):
         )
 
         Data.conn.commit()
+
+    @commands.command(name="bankrob", aliases=["br", "heist"], help="Heist someone's bank")
+    @commands.cooldown(1, 120)
+    async def bankrob(self, ctx, victim: discord.Member):
+        pass
 
     @commands.group(name="leaderboard", aliases=["lb"], help="Wallet leaderboard", invoke_without_command=True)
     async def leaderboard(self, ctx):
