@@ -50,7 +50,7 @@ class Currency(commands.Cog):
         current_balance = Data.c.fetchone()[0]
 
         Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
-        current_reciever_balance = Data.c.fetchone()[0]
+        current_receiver_balance = Data.c.fetchone()[0]
 
         # Ensure user has enough to pay
         if amount > current_balance:
@@ -69,7 +69,7 @@ class Currency(commands.Cog):
         Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
-                "new_amount": current_reciever_balance + amount,
+                "new_amount": current_receiver_balance + amount,
                 "user_id": user.id
             }
         )
@@ -169,7 +169,6 @@ class Currency(commands.Cog):
 
         Data.conn.commit()
         await ctx.send(f"You withdrew **{amount} beans** from your bank.")
-
 
     @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling")
     @commands.cooldown(1, 120)
