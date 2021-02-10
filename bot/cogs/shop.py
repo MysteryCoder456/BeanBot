@@ -3,7 +3,7 @@ import json
 import discord
 from discord.ext import commands
 
-from bot.data import Data
+from data import Data
 
 
 class Shop(commands.Cog):

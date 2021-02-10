@@ -2,7 +2,7 @@ import random
 import discord
 from discord.ext import commands
 
-from bot.data import Data
+from data import Data
 
 
 class Currency(commands.Cog):
