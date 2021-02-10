@@ -50,7 +50,7 @@ class Currency(commands.Cog):
         current_balance = Data.c.fetchone()[0]
 
         Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": user.id})
-        current_reciever_balance = Data.c.fetchone()[0]
+        current_receiver_balance = Data.c.fetchone()[0]
 
         # Ensure user has enough to pay
         if amount > current_balance:
@@ -69,7 +69,7 @@ class Currency(commands.Cog):
         Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
-                "new_amount": current_reciever_balance + amount,
+                "new_amount": current_receiver_balance + amount,
                 "user_id": user.id
             }
         )
@@ -170,7 +170,6 @@ class Currency(commands.Cog):
         Data.conn.commit()
         await ctx.send(f"You withdrew **{amount} beans** from your bank.")
 
-
     @commands.command(name="rob", aliases=["steal"], help="\"Borrow\" some money from people without telling")
     @commands.cooldown(1, 120)
     async def rob(self, ctx, victim: discord.Member):
@@ -192,9 +191,14 @@ class Currency(commands.Cog):
             await ctx.send(f"You need at least 150 beans for that. You need {amount_needed} more beans...")
             return
 
+        if victim.status != discord.Status.offline:
+            success_rate = 35
+        else:
+            success_rate = 70
+
         chance = random.randint(0, 100)
 
-        if chance > 35:
+        if chance < success_rate:
             amount_stolen = random.randint(0, victim_wallet)
             await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
         else:
