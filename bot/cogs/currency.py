@@ -232,7 +232,7 @@ class Currency(commands.Cog):
         wallets = [data_entry for data_entry in Data.c.fetchall() if data_entry[1] != 0]
         wallets.sort(key=lambda x: x[1], reverse=True)
 
-        lb_embed = discord.Embed(title="Top 10 Global Leaderboard", color=self.theme_color)
+        lb_embed = discord.Embed(title="Top 10 Global Wallet Leaderboard", color=self.theme_color)
 
         for (i, data_entry) in enumerate(wallets[:10]):
             user = await self.bot.fetch_user(data_entry[0])
@@ -248,7 +248,7 @@ class Currency(commands.Cog):
         wallets = [data_entry for data_entry in Data.c.fetchall() if data_entry[1] != 0 and data_entry[0] in server_user_ids]
         wallets.sort(key=lambda x: x[1], reverse=True)
 
-        lb_embed = discord.Embed(title="Top 10 Server Leaderboard", color=self.theme_color)
+        lb_embed = discord.Embed(title="Top 10 Server Wallet Leaderboard", color=self.theme_color)
 
         for (i, data_entry) in enumerate(wallets[:10]):
             user = await self.bot.fetch_user(data_entry[0])
