@@ -191,9 +191,14 @@ class Currency(commands.Cog):
             await ctx.send(f"You need at least 150 beans for that. You need {amount_needed} more beans...")
             return
 
+        if victim.status != discord.Status.offline:
+            success_rate = 35
+        else:
+            success_rate = 70
+
         chance = random.randint(0, 100)
 
-        if chance > 35:
+        if chance < success_rate:
             amount_stolen = random.randint(0, victim_wallet)
             await ctx.send(f"OMG! You stole **{amount_stolen} beans** from **{victim.display_name}**...")
         else:
