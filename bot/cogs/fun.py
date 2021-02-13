@@ -211,6 +211,7 @@ class Fun(commands.Cog):
 
         await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
 
+    @commands.has_guild_permissions(administrator=True)
     @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message")
     async def snipe(self, ctx):
         msg = self.deleted_msgs[str(ctx.channel.id)]
@@ -221,6 +222,7 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=snipe_embed)
 
+    @commands.has_guild_permissions(administrator=True)
     @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message")
     async def editsnipe(self, ctx):
         msg = self.edited_msgs[str(ctx.channel.id)]
