@@ -244,6 +244,20 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
 
+    @commands.command(name="powerups", aliases=["power", "pu"], help="See your currently active powerups")
+    async def powerups(self, ctx):
+        Data.check_user_entry(ctx.author)
+
+        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        powerups = json.loads(Data.c.fetchone()[0])
+        powerups_embed = discord.Embed(title=f"{ctx.author.display_name}'s Active Powerups", color=self.theme_color)
+
+        for powerup in powerups:
+            powerup_name = " ".join(powerup.split("_")).title()
+            powerups_embed.add_field(name=powerup_name, value=powerups[powerup])
+
+        await ctx.send(embed=powerups_embed)
+
     @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations")
     async def pray(self, ctx, *, prayer=None):
         if prayer is None:
