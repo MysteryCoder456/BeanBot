@@ -13,11 +13,14 @@ Some mini-games you can play:
 ## Currency
 Earning money is fun, stealing it is even more fun. But when you're stolen from it's not as fun. So you can deposit your beans to be kept safely inside your bank. You start with only 500 beans of bank storage, you can extend this by buying Bank Storage Coupons from the shop.
 
+## Shop
+Speaking of buying from the shops, you can buy a variety of items from the shop that can do different things. These can be items to flex your wealth or powerups that help you in different ways.
+
 ## Image Commands
 Generate your own memes using the Image commands. Making memes with Bean Bot is statistically proven to get more updoots on Reddit, just saying...
 
 ## Word Tracking
-Add words to be tracked so you can see how many times it has been said in the entire server. Great for being BadBoyHalo ;)
+Add words to be tracked so you can see how many times it has been said in the entire server. Great for being like BadBoyHalo ;)
 
-## Shop
-Speaking of buying from the shops, you can buy a variety of items from the shop that can do different things.
+## Reddit
+You can browse any subreddit of your liking. Whether it's a text post or an image post or a dank meme, you can browse it all from here.
