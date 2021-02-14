@@ -18,8 +18,9 @@ class Data:
             "job_id"	INTEGER DEFAULT 0,
             "job_streak"	INTEGER DEFAULT 0,
             "last_work_date"	TEXT DEFAULT '2020-1-1 12:00',
-            "inventory"	TEXT DEFAULT '[]'
-        )""")
+            "inventory"	TEXT DEFAULT '[]',
+            "powerups"	TEXT DEFAULT '[]')
+        """)
 
         cls.c.execute("""CREATE TABLE IF NOT EXISTS "guilds" (
             "id"	INTEGER,
