@@ -14,5 +14,14 @@
         "price": 500,
         "function_id": null,
         "function_vars": {}
+    },
+    {
+        "name": "Sugar Coated Bean",
+        "description": "A fighting power up that gives you energy and increases strength.",
+        "price": 650,
+        "function_id": 1,
+        "function_vars": {
+            "damage_increase": 20
+        }
     }
 ]
