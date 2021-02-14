@@ -83,11 +83,6 @@ class Fun(commands.Cog):
             await ctx.send("You can't do that to yourself, smh...")
             return
 
-        p1_health = 100
-        p2_health = 100
-        p1_name = ctx.author.display_name
-        p2_name = user.display_name
-
         if ctx.author in self.currently_fighting:
             await ctx.send("You are already fighting someone at the moment...")
             return
@@ -96,14 +91,55 @@ class Fun(commands.Cog):
             await ctx.send(f"**{user.display_name}** is already fighting someone at the moment...")
             return
 
+        p1_health = 100
+        p2_health = 100
+        p1_name = ctx.author.display_name
+        p2_name = user.display_name
+
         self.currently_fighting.append(ctx.author)
         self.currently_fighting.append(user)
+
+        Data.check_user_entry(ctx.author)
+        Data.check_user_entry(user)
+
+        # Load player powerups
+        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        p1_powerups = json.loads(Data.c.fetchone()[0])
+        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": user.id})
+        p2_powerups = json.loads(Data.c.fetchone()[0])
 
         def check_p1(message):
             return message.author == ctx.author and message.channel == ctx.channel
 
         def check_p2(message):
             return message.author == user and message.channel == ctx.channel
+
+        async def end():
+            self.currently_fighting.remove(ctx.author)
+            self.currently_fighting.remove(user)
+
+            if p1_health != 100 and p2_health != 100:
+                if len(p1_powerups) > 0:
+                    Data.c.execute(
+                        "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
+                        {
+                            "new_powerups": "{}",
+                            "user_id": ctx.author.id
+                        }
+                    )
+                    Data.conn.commit()
+                    await ctx.send(f"{ctx.author.mention}, you have used up your active powerups.")
+
+                if len(p2_powerups) > 0:
+                    Data.c.execute(
+                        "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
+                        {
+                            "new_powerups": "{}",
+                            "user_id": user.id
+                        }
+                    )
+                    Data.conn.commit()
+                    await ctx.send(f"{user.mention}, you have used up your active powerups.")
 
         await ctx.send(f"{ctx.author.mention} wants to fight {user.mention}. Let's see how this goes...")
 
@@ -120,6 +156,12 @@ class Fun(commands.Cog):
 
                     if p2_response == "punch":
                         damage = random.randint(10, 45)
+
+                        try:
+                            damage += p2_powerups["damage_increase"]
+                        except KeyError:
+                            pass
+
                         p1_health -= damage
                         p2_resp_valid = True
 
@@ -133,10 +175,8 @@ class Fun(commands.Cog):
                         await ctx.send(f"**{p2_name}** defended and regained **{heal}** health! Proteccshun...")
 
                     elif p2_response == "end":
-                        p2_resp_valid = True
                         await ctx.send(f"**{p2_name}** chickened out, spam noob in the chat!")
-                        self.currently_fighting.remove(ctx.author)
-                        self.currently_fighting.remove(user)
+                        await end()
                         return
 
                     else:
@@ -144,14 +184,12 @@ class Fun(commands.Cog):
 
             except asyncio.TimeoutError:
                 await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
-                self.currently_fighting.remove(ctx.author)
-                self.currently_fighting.remove(user)
+                await end()
                 return
 
             if p1_health <= 0:
                 await ctx.send(f"Wow **{p1_name}** just died. Git gud noooob!")
-                self.currently_fighting.remove(ctx.author)
-                self.currently_fighting.remove(user)
+                await end()
                 return
             else:
                 await ctx.send(f"**{p1_name}** is now left with **{p1_health}** health.")
@@ -168,6 +206,12 @@ class Fun(commands.Cog):
 
                     if p1_response == "punch":
                         damage = random.randint(10, 45)
+
+                        try:
+                            damage += p1_powerups["damage_increase"]
+                        except KeyError:
+                            pass
+
                         p2_health -= damage
                         p1_resp_valid = True
 
@@ -181,10 +225,8 @@ class Fun(commands.Cog):
                         await ctx.send(f"**{p1_name}** defended and regained **{heal}** health! Proteccshun...")
 
                     elif p1_response == "end":
-                        p1_resp_valid = True
                         await ctx.send(f"**{p1_name}** chickened out, spam noob in the chat!")
-                        self.currently_fighting.remove(ctx.author)
-                        self.currently_fighting.remove(user)
+                        await end()
                         return
 
                     else:
@@ -192,14 +234,12 @@ class Fun(commands.Cog):
 
             except asyncio.TimeoutError:
                 await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
-                self.currently_fighting.remove(ctx.author)
-                self.currently_fighting.remove(user)
+                await end()
                 return
 
             if p2_health <= 0:
                 await ctx.send(f"Wow **{p2_name}** just died. Git gud noooob!")
-                self.currently_fighting.remove(ctx.author)
-                self.currently_fighting.remove(user)
+                await end()
                 return
             else:
                 await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")

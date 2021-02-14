@@ -154,12 +154,30 @@ class Shop(commands.Cog):
         if f_id is not None:
             f_vars = item_info["function_vars"]
 
-            if f_id == 0:
+            if f_id == 0:  # Bank Storage Coupon
                 bank_capacity += f_vars["bank_capacity_increase"]
                 Data.c.execute(
                     "UPDATE users SET bank_capacity = :new_capacity WHERE id = :user_id",
                     {
                         "new_capacity": bank_capacity,
+                        "user_id": ctx.author.id
+                    }
+                )
+
+            elif f_id == 1:  # Sugar Coated Bean
+                Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+                current_powerups = json.loads(Data.c.fetchone()[0])
+
+                if "damage_increase" in current_powerups:
+                    await ctx.send(f"This powerup is already active!")
+                    return
+
+                current_powerups["damage_increase"] = f_vars["damage_increase"]
+
+                Data.c.execute(
+                    "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
+                    {
+                        "new_powerups": json.dumps(current_powerups),
                         "user_id": ctx.author.id
                     }
                 )
