@@ -20,7 +20,7 @@ class Reddit(commands.Cog):
 
     @commands.command(name="reddit", help="Browse a subreddit")
     async def reddit(self, ctx, subreddit_name: str, category: str = "hot"):
-        subreddit_name.replace("r/", "")
+        subreddit_name = subreddit_name.replace("r/", "")
         subred = self.reddit_client.subreddit(subreddit_name)
 
         listing = None
