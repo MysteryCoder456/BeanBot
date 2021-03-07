@@ -1,6 +1,7 @@
 # Bean Bot
+[![Discord Bots](https://top.gg/api/widget/upvotes/804243703455547462.svg)](https://top.gg/bot/804243703455547462)
+
 Bean Bot is an economy bot that uses beans as currency. There is a jobs system to earn money and also fun mini-games to play with friends(if you have any that is).
-[![Discord Bots](https://top.gg/api/widget/804243703455547462.svg)](https://top.gg/bot/804243703455547462)
 
 ## Jobs
 You can take different jobs that are offered by the *Bean Society*. You can work once everyday and if you skip work for a day, you lose your streak. If you have a high enough streak you can take other jobs that pay more.
