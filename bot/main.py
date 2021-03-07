@@ -30,8 +30,7 @@ intents.members = True
 intents.presences = True
 
 bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.", intents=intents)
-# TODO: uncomment when top.gg approved
-# dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
+dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
 presence_task = None
 running = True
 
@@ -185,8 +184,7 @@ if __name__ == "__main__":
         running = False
         time.sleep(5)
         loop.run_until_complete(bot.logout())
-        # TODO: uncomment when top.gg approved
-        # asyncio.run(dbl_client.close())
+        asyncio.run(dbl_client.close())
 
         # Close Database connection
         Data.conn.commit()
