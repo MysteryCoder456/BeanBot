@@ -307,6 +307,6 @@ class Fun(commands.Cog):
         editsnipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
 
         for msg in msgs:
-            editsnipe_embed.add_field(name=msg.author.display_name, value=f"{msg[0].content} **-->** {msg[1].content}", inline=False)
+            editsnipe_embed.add_field(name=msg[0].author.display_name, value=f"{msg[0].content} **-->** {msg[1].content}", inline=False)
 
         await ctx.send(embed=editsnipe_embed)
