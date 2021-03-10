@@ -37,6 +37,6 @@ class Vote(commands.Cog):
     @commands.command(name="vote", help="Get links to Bot List sites where you can vote for me")
     async def vote(self, ctx):
         vote_embed = discord.Embed(title="Vote Bean Bot for Best Bot", color=self.theme_color)
-        vote_embed.add_field(name="Top.gg", value="[Click here to vote](https://top.gg/bot/795564109922959361)")
+        vote_embed.add_field(name="Top.gg", value="[Click here to vote](https://top.gg/bot/804243703455547462)")
 
         await ctx.send(embed=vote_embed)
