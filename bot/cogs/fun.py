@@ -40,7 +40,7 @@ class Fun(commands.Cog):
     async def on_message_edit(self, before, after):
         ch_id_str = str(before.channel.id)
 
-        if not message.author.bot:
+        if not before.author.bot:
             if ch_id_str not in self.edited_msgs:
                 self.edited_msgs[ch_id_str] = []
 
