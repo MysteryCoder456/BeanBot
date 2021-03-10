@@ -27,25 +27,27 @@ class Fun(commands.Cog):
     async def on_message_delete(self, message: discord.Message):
         ch_id_str = str(message.channel.id)
 
-        if ch_id_str not in self.deleted_msgs:
-            self.deleted_msgs[ch_id_str] = []
+        if not message.author.bot:
+            if ch_id_str not in self.deleted_msgs:
+                self.deleted_msgs[ch_id_str] = []
 
-        self.deleted_msgs[ch_id_str].append(message)
+            self.deleted_msgs[ch_id_str].append(message)
 
-        if len(self.deleted_msgs[ch_id_str]) > self.snipe_limit:
-            self.deleted_msgs[ch_id_str].pop(0)
+            if len(self.deleted_msgs[ch_id_str]) > self.snipe_limit:
+                self.deleted_msgs[ch_id_str].pop(0)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         ch_id_str = str(before.channel.id)
 
-        if ch_id_str not in self.edited_msgs:
-            self.edited_msgs[ch_id_str] = []
+        if not message.author.bot:
+            if ch_id_str not in self.edited_msgs:
+                self.edited_msgs[ch_id_str] = []
 
-        self.edited_msgs[ch_id_str].append((before, after))
+            self.edited_msgs[ch_id_str].append((before, after))
 
-        if len(self.edited_msgs[ch_id_str]) > self.snipe_limit:
-            self.edited_msgs[ch_id_str].pop(0)
+            if len(self.edited_msgs[ch_id_str]) > self.snipe_limit:
+                self.edited_msgs[ch_id_str].pop(0)
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend")
     async def gamble(self, ctx, amount: int):
