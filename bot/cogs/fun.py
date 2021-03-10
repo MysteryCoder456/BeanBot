@@ -16,6 +16,8 @@ class Fun(commands.Cog):
         self.currently_fighting = []
         self.deleted_msgs = {}
         self.edited_msgs = {}
+        self.snipe_limit = 15
+
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
 
         with open(os.path.join(data_dir, "beanlations.json"), "r") as beanlations_file:
@@ -23,11 +25,27 @@ class Fun(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
-        self.deleted_msgs[str(message.channel.id)] = message
+        ch_id_str = str(message.channel.id)
+
+        if ch_id_str not in self.deleted_msgs:
+            self.deleted_msgs[ch_id_str] = []
+
+        self.deleted_msgs[ch_id_str].append(message)
+
+        if len(self.deleted_msgs[ch_id_str]) > self.snipe_limit:
+            self.deleted_msgs[ch_id_str].pop(-1)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
-        self.edited_msgs[str(before.channel.id)] = before
+    async def on_message_edit(self, before, _):
+        ch_id_str = str(before.channel.id)
+
+        if ch_id_str not in self.edited_msgs:
+            self.edited_msgs[ch_id_str] = []
+
+        self.edited_msgs[ch_id_str].append(before)
+
+        if len(self.edited_msgs[ch_id_str]) > self.snipe_limit:
+            self.edited_msgs[ch_id_str].pop(-1)
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend")
     async def gamble(self, ctx, amount: int):
@@ -62,8 +80,8 @@ class Fun(commands.Cog):
 
         gamble_embed = discord.Embed(title="Gambling Results")
 
-        gamble_embed.add_field(name="You rolled", value=player_roll)
-        gamble_embed.add_field(name="Dealer rolled", value=dealer_roll)
+        gamble_embed.add_field(name="You rolled", value=str(player_roll))
+        gamble_embed.add_field(name="Dealer rolled", value=str(dealer_roll))
 
         if player_roll > dealer_roll:
             gamble_embed.color = discord.Color.green()
@@ -145,7 +163,6 @@ class Fun(commands.Cog):
 
         while True:
             # Player 2 turn
-            p2_response = None
             p2_resp_valid = False
 
             try:
@@ -195,7 +212,6 @@ class Fun(commands.Cog):
                 await ctx.send(f"**{p1_name}** is now left with **{p1_health}** health.")
 
             # Player 1 turn
-            p1_response = None
             p1_resp_valid = False
 
             try:
@@ -267,22 +283,30 @@ class Fun(commands.Cog):
 
     @commands.has_guild_permissions(administrator=True)
     @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message")
-    async def snipe(self, ctx):
-        msg = self.deleted_msgs[str(ctx.channel.id)]
+    async def snipe(self, ctx, limit: int = 1):
+        if limit > self.snipe_limit:
+            await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
+            return
 
+        msgs = self.deleted_msgs[str(ctx.channel.id)][:limit]
         snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
-        snipe_embed.set_thumbnail(url=msg.author.avatar_url)
-        snipe_embed.add_field(name=msg.author.display_name, value=msg.content)
+
+        for msg in msgs:
+            snipe_embed.add_field(name=msg.author.display_name, value=msg.content, inline=False)
 
         await ctx.send(embed=snipe_embed)
 
     @commands.has_guild_permissions(administrator=True)
     @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message")
-    async def editsnipe(self, ctx):
-        msg = self.edited_msgs[str(ctx.channel.id)]
+    async def editsnipe(self, ctx, limit: int = 1):
+        if limit > self.snipe_limit:
+            await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
+            return
 
-        snipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
-        snipe_embed.set_thumbnail(url=msg.author.avatar_url)
-        snipe_embed.add_field(name=msg.author.display_name, value=msg.content)
+        msgs = self.edited_msgs[str(ctx.channel.id)][:limit]
+        editsnipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
 
-        await ctx.send(embed=snipe_embed)
+        for msg in msgs:
+            editsnipe_embed.add_field(name=msg.author.display_name, value=msg.content, inline=False)
+
+        await ctx.send(embed=editsnipe_embed)
