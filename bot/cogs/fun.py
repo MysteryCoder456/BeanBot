@@ -33,19 +33,19 @@ class Fun(commands.Cog):
         self.deleted_msgs[ch_id_str].append(message)
 
         if len(self.deleted_msgs[ch_id_str]) > self.snipe_limit:
-            self.deleted_msgs[ch_id_str].pop(-1)
+            self.deleted_msgs[ch_id_str].pop(0)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before, _):
+    async def on_message_edit(self, before, after):
         ch_id_str = str(before.channel.id)
 
         if ch_id_str not in self.edited_msgs:
             self.edited_msgs[ch_id_str] = []
 
-        self.edited_msgs[ch_id_str].append(before)
+        self.edited_msgs[ch_id_str].append((before, after))
 
         if len(self.edited_msgs[ch_id_str]) > self.snipe_limit:
-            self.edited_msgs[ch_id_str].pop(-1)
+            self.edited_msgs[ch_id_str].pop(0)
 
     @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend")
     async def gamble(self, ctx, amount: int):
@@ -288,7 +288,7 @@ class Fun(commands.Cog):
             await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
             return
 
-        msgs = self.deleted_msgs[str(ctx.channel.id)][:limit]
+        msgs = self.deleted_msgs[str(ctx.channel.id)][::-1][:limit]
         snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
 
         for msg in msgs:
@@ -303,10 +303,10 @@ class Fun(commands.Cog):
             await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
             return
 
-        msgs = self.edited_msgs[str(ctx.channel.id)][:limit]
+        msgs = self.edited_msgs[str(ctx.channel.id)][::-1][:limit]
         editsnipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
 
         for msg in msgs:
-            editsnipe_embed.add_field(name=msg.author.display_name, value=msg.content, inline=False)
+            editsnipe_embed.add_field(name=msg.author.display_name, value=f"{msg[0].content} **-->** {msg[1].content}", inline=False)
 
         await ctx.send(embed=editsnipe_embed)
