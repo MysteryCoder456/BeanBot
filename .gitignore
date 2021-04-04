@@ -130,3 +130,6 @@ dmypy.json
 
 # Bot Caches
 cache/
+
+# MacOS Temporary Files
+.DS_Store
