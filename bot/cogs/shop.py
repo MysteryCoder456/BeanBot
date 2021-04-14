@@ -10,23 +10,33 @@ class Shop(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
-        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
+        data_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            "data",
+        )
 
         with open(os.path.join(data_dir, "shop_data.json"), "r") as shop_file:
             self.shop_data = json.load(shop_file)
 
-        self.is_vowel = lambda ch: (ch in ('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'))
+        self.is_vowel = lambda ch: (
+            ch in ("a", "e", "i", "o", "u", "A", "E", "I", "O", "U")
+        )
 
     @commands.command(name="shop", help="List the available items in the shop")
     async def shop(self, ctx):
-        shop_embed = discord.Embed(title="The Bean Shop", color=self.theme_color)
+        shop_embed = discord.Embed(
+            title="The Bean Shop", color=self.theme_color
+        )
 
         for item in self.shop_data:
             item_name = item["name"]
             item_desc = item["description"]
             item_price = item["price"]
 
-            shop_embed.add_field(name=item_name, value=f"{item_desc}\nPrice: **{item_price} beans**")
+            shop_embed.add_field(
+                name=item_name,
+                value=f"{item_desc}\nPrice: **{item_price} beans**",
+            )
 
         await ctx.send(embed=shop_embed)
 
@@ -34,7 +44,10 @@ class Shop(commands.Cog):
     async def buy(self, ctx, quantity: int, *, item_name):
         Data.check_user_entry(ctx.author)
 
-        Data.c.execute("SELECT wallet, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        Data.c.execute(
+            "SELECT wallet, inventory FROM users WHERE id = :user_id",
+            {"user_id": ctx.author.id},
+        )
         data = Data.c.fetchone()
         wallet_amount = data[0]
         inventory = json.loads(data[1])
@@ -54,7 +67,9 @@ class Shop(commands.Cog):
 
         if total_price > wallet_amount:
             amount_needed = total_price - wallet_amount
-            await ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
+            await ctx.send(
+                f"You don't have enough beans for that. You need {amount_needed} more beans."
+            )
             return
 
         # Find out if the item being bought is a duplicate
@@ -74,50 +89,64 @@ class Shop(commands.Cog):
                 "description": item_info["description"],
                 "quantity": quantity,
                 "function_id": item_info["function_id"],
-                "function_vars": item_info["function_vars"]
+                "function_vars": item_info["function_vars"],
             }
             inventory.append(inventory_entry)
 
         Data.c.execute(
             "UPDATE users SET inventory = :new_json WHERE id = :user_id",
-            {
-                "new_json": json.dumps(inventory),
-                "user_id": ctx.author.id
-            }
+            {"new_json": json.dumps(inventory), "user_id": ctx.author.id},
         )
 
         Data.c.execute(
             "UPDATE users SET wallet = :new_amount WHERE id = :user_id",
             {
                 "new_amount": wallet_amount - total_price,
-                "user_id": ctx.author.id
-            }
+                "user_id": ctx.author.id,
+            },
         )
 
         Data.conn.commit()
 
         if quantity > 1:
-            await ctx.send(f"You bought **{quantity} {item_n}s** for **{total_price} beans**!")
+            await ctx.send(
+                f"You bought **{quantity} {item_n}s** for **{total_price} beans**!"
+            )
         else:
-            await ctx.send(f"You bought **{item_n}** for **{total_price} beans**!")
+            await ctx.send(
+                f"You bought **{item_n}** for **{total_price} beans**!"
+            )
 
-    @commands.command(name="inventory", aliases=["inv"], help="List all the items in your inventory")
+    @commands.command(
+        name="inventory",
+        aliases=["inv"],
+        help="List all the items in your inventory",
+    )
     async def inventory(self, ctx, user: discord.Member = None):
         if user is None:
             user = ctx.author
 
         Data.check_user_entry(user)
 
-        Data.c.execute("SELECT inventory FROM users WHERE id = :user_id", {"user_id": user.id})
+        Data.c.execute(
+            "SELECT inventory FROM users WHERE id = :user_id",
+            {"user_id": user.id},
+        )
         inventory = json.loads(Data.c.fetchone()[0])
 
-        inventory_embed = discord.Embed(title=f"{user.display_name}'s Inventory", color=self.theme_color)
+        inventory_embed = discord.Embed(
+            title=f"{user.display_name}'s Inventory", color=self.theme_color
+        )
 
         for item in inventory:
             item_name = item["name"]
             item_desc = item["description"]
             item_quantity = item["quantity"]
-            inventory_embed.add_field(name=item_name, value=f"Quantity: {item_quantity}\n{item_desc}", inline=False)
+            inventory_embed.add_field(
+                name=item_name,
+                value=f"Quantity: {item_quantity}\n{item_desc}",
+                inline=False,
+            )
 
         await ctx.send(embed=inventory_embed)
 
@@ -125,7 +154,10 @@ class Shop(commands.Cog):
     async def use(self, ctx, *, item_name):
         Data.check_user_entry(ctx.author)
 
-        Data.c.execute("SELECT bank_capacity, inventory FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        Data.c.execute(
+            "SELECT bank_capacity, inventory FROM users WHERE id = :user_id",
+            {"user_id": ctx.author.id},
+        )
         data = Data.c.fetchone()
         bank_capacity = data[0]
         inventory = json.loads(data[1])
@@ -158,14 +190,14 @@ class Shop(commands.Cog):
                 bank_capacity += f_vars["bank_capacity_increase"]
                 Data.c.execute(
                     "UPDATE users SET bank_capacity = :new_capacity WHERE id = :user_id",
-                    {
-                        "new_capacity": bank_capacity,
-                        "user_id": ctx.author.id
-                    }
+                    {"new_capacity": bank_capacity, "user_id": ctx.author.id},
                 )
 
             elif f_id == 1:  # Sugar Coated Bean
-                Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+                Data.c.execute(
+                    "SELECT powerups FROM users WHERE id = :user_id",
+                    {"user_id": ctx.author.id},
+                )
                 current_powerups = json.loads(Data.c.fetchone()[0])
 
                 if "damage_increase" in current_powerups:
@@ -178,17 +210,14 @@ class Shop(commands.Cog):
                     "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
                     {
                         "new_powerups": json.dumps(current_powerups),
-                        "user_id": ctx.author.id
-                    }
+                        "user_id": ctx.author.id,
+                    },
                 )
 
         # Write inventory changes to DB
         Data.c.execute(
             "UPDATE users SET inventory = :new_inventory WHERE id = :user_id",
-            {
-                "new_inventory": json.dumps(inventory),
-                "user_id": ctx.author.id
-            }
+            {"new_inventory": json.dumps(inventory), "user_id": ctx.author.id},
         )
         Data.conn.commit()
 

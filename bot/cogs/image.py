@@ -9,8 +9,14 @@ class Image(commands.Cog):
     def __init__(self, bot, theme_color):
         self.bot = bot
         self.theme_color = theme_color
-        self.images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "images")
-        self.fonts_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "fonts")
+        self.images_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            "images",
+        )
+        self.fonts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            "fonts",
+        )
 
         # Create cache directory
         if "cache" not in os.listdir(self.images_dir):
@@ -43,7 +49,14 @@ class Image(commands.Cog):
         await ctx.send(file=discord.File(cache_filename))
 
     @commands.command(name="slap", help="Batman slap meme")
-    async def slap(self, ctx, person1: discord.User, person2: discord.User = None, *, text: str = None):
+    async def slap(
+        self,
+        ctx,
+        person1: discord.User,
+        person2: discord.User = None,
+        *,
+        text: str = None
+    ):
         if person2 is None:
             slapper = ctx.author
             victim = person1
@@ -83,7 +96,9 @@ class Image(commands.Cog):
         await ctx.send(file=discord.File(cache_filename))
 
     @commands.command(name="lick", help="JoJo lick meme")
-    async def lick(self, ctx, person1: discord.User, person2: discord.User = None):
+    async def lick(
+        self, ctx, person1: discord.User, person2: discord.User = None
+    ):
         if person2 is None:
             licker = ctx.author
             lickee = person1

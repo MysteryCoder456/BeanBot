@@ -15,7 +15,7 @@ class Reddit(commands.Cog):
             client_secret=os.environ["REDDIT_SECRET"],
             user_agent="Bean Bot",
             username=os.environ["REDDIT_USERNAME"],
-            password=os.environ["REDDIT_PASSWORD"]
+            password=os.environ["REDDIT_PASSWORD"],
         )
 
     @commands.command(name="reddit", help="Browse a subreddit")
@@ -38,17 +38,25 @@ class Reddit(commands.Cog):
         elif category == "rising":
             listing = subred.rising(limit=10)
         else:
-            await ctx.send("That category is non-existent, just like your common sense smh...")
+            await ctx.send(
+                "That category is non-existent, just like your common sense smh..."
+            )
             return
 
         all_posts = [submission for submission in listing]
         post = random.choice(all_posts)
 
         if subred.over18 and not ctx.channel.is_nsfw():
-            await ctx.send("This subreddit is marked NSFW. Please set this channel to NSFW to view this subreddit.")
+            await ctx.send(
+                "This subreddit is marked NSFW. Please set this channel to NSFW to view this subreddit."
+            )
             return
 
-        post_embed = discord.Embed(title=post.title, color=self.theme_color, url=f"https://www.reddit.com/{post.permalink}")
+        post_embed = discord.Embed(
+            title=post.title,
+            color=self.theme_color,
+            url=f"https://www.reddit.com/{post.permalink}",
+        )
 
         if post.selftext == "":
             if not post.is_self:
@@ -60,10 +68,14 @@ class Reddit(commands.Cog):
             if len(post_content) > 1024:
                 post_content = post_content[:1021] + "..."
 
-            post_embed.add_field(name="Content", value=post_content, inline=False)
+            post_embed.add_field(
+                name="Content", value=post_content, inline=False
+            )
 
         post_embed.add_field(name="Score", value=post.score)
-        post_embed.set_footer(text=f"Post on r/{post.subreddit.display_name} by u/{post.author}")
+        post_embed.set_footer(
+            text=f"Post on r/{post.subreddit.display_name} by u/{post.author}"
+        )
 
         await ctx.send(embed=post_embed)
 
@@ -86,13 +98,19 @@ class Reddit(commands.Cog):
         elif category == "rising":
             listing = subred.rising(limit=10)
         else:
-            await ctx.send("That category is non-existent, just like your common sense smh...")
+            await ctx.send(
+                "That category is non-existent, just like your common sense smh..."
+            )
             return
 
         all_posts = [submission for submission in listing]
         post = random.choice(all_posts)
 
-        post_embed = discord.Embed(title=post.title, color=self.theme_color, url=f"https://new.reddit.com{post.permalink}")
+        post_embed = discord.Embed(
+            title=post.title,
+            color=self.theme_color,
+            url=f"https://new.reddit.com{post.permalink}",
+        )
 
         if post.selftext == "":
             if not post.is_self:
@@ -104,9 +122,13 @@ class Reddit(commands.Cog):
             if len(post_content) > 1024:
                 post_content = post_content[:1021] + "..."
 
-            post_embed.add_field(name="Content", value=post_content, inline=False)
+            post_embed.add_field(
+                name="Content", value=post_content, inline=False
+            )
 
         post_embed.add_field(name="Score", value=post.score)
-        post_embed.set_footer(text=f"Post on r/{post.subreddit.display_name} by u/{post.author}")
+        post_embed.set_footer(
+            text=f"Post on r/{post.subreddit.display_name} by u/{post.author}"
+        )
 
         await ctx.send(embed=post_embed)

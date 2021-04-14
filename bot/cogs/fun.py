@@ -18,9 +18,14 @@ class Fun(commands.Cog):
         self.edited_msgs = {}
         self.snipe_limit = 15
 
-        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "data")
+        data_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+            "data",
+        )
 
-        with open(os.path.join(data_dir, "beanlations.json"), "r") as beanlations_file:
+        with open(
+            os.path.join(data_dir, "beanlations.json"), "r"
+        ) as beanlations_file:
             self.beanlations = json.load(beanlations_file)
 
     @commands.Cog.listener()
@@ -49,16 +54,25 @@ class Fun(commands.Cog):
             if len(self.edited_msgs[ch_id_str]) > self.snipe_limit:
                 self.edited_msgs[ch_id_str].pop(0)
 
-    @commands.command(name="gamble", aliases=["gam"], help="Gamble some money to see if you earn more than you spend")
+    @commands.command(
+        name="gamble",
+        aliases=["gam"],
+        help="Gamble some money to see if you earn more than you spend",
+    )
     async def gamble(self, ctx, amount: int):
         Data.check_user_entry(ctx.author)
 
-        Data.c.execute("SELECT wallet FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        Data.c.execute(
+            "SELECT wallet FROM users WHERE id = :user_id",
+            {"user_id": ctx.author.id},
+        )
         wallet = Data.c.fetchone()[0]
 
         if amount > wallet:
             amount_needed = amount - wallet
-            await ctx.send(f"You don't have enough beans for that. You need {amount_needed} more beans.")
+            await ctx.send(
+                f"You don't have enough beans for that. You need {amount_needed} more beans."
+            )
             return
 
         player_roll = random.randint(1, 6)
@@ -73,10 +87,7 @@ class Fun(commands.Cog):
 
         Data.c.execute(
             "UPDATE users SET wallet = :new_wallet WHERE id = :user_id",
-            {
-                "new_wallet": wallet + amount_won,
-                "user_id": ctx.author.id
-            }
+            {"new_wallet": wallet + amount_won, "user_id": ctx.author.id},
         )
         Data.conn.commit()
 
@@ -108,7 +119,9 @@ class Fun(commands.Cog):
             return
 
         elif user in self.currently_fighting:
-            await ctx.send(f"**{user.display_name}** is already fighting someone at the moment...")
+            await ctx.send(
+                f"**{user.display_name}** is already fighting someone at the moment..."
+            )
             return
 
         p1_health = 100
@@ -123,13 +136,21 @@ class Fun(commands.Cog):
         Data.check_user_entry(user)
 
         # Load player powerups
-        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        Data.c.execute(
+            "SELECT powerups FROM users WHERE id = :user_id",
+            {"user_id": ctx.author.id},
+        )
         p1_powerups = json.loads(Data.c.fetchone()[0])
-        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": user.id})
+        Data.c.execute(
+            "SELECT powerups FROM users WHERE id = :user_id",
+            {"user_id": user.id},
+        )
         p2_powerups = json.loads(Data.c.fetchone()[0])
 
         def check_p1(message):
-            return message.author == ctx.author and message.channel == ctx.channel
+            return (
+                message.author == ctx.author and message.channel == ctx.channel
+            )
 
         def check_p2(message):
             return message.author == user and message.channel == ctx.channel
@@ -142,26 +163,26 @@ class Fun(commands.Cog):
                 if len(p1_powerups) > 0:
                     Data.c.execute(
                         "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
-                        {
-                            "new_powerups": "{}",
-                            "user_id": ctx.author.id
-                        }
+                        {"new_powerups": "{}", "user_id": ctx.author.id},
                     )
                     Data.conn.commit()
-                    await ctx.send(f"{ctx.author.mention}, you have used up your active powerups.")
+                    await ctx.send(
+                        f"{ctx.author.mention}, you have used up your active powerups."
+                    )
 
                 if len(p2_powerups) > 0:
                     Data.c.execute(
                         "UPDATE users SET powerups = :new_powerups WHERE id = :user_id",
-                        {
-                            "new_powerups": "{}",
-                            "user_id": user.id
-                        }
+                        {"new_powerups": "{}", "user_id": user.id},
                     )
                     Data.conn.commit()
-                    await ctx.send(f"{user.mention}, you have used up your active powerups.")
+                    await ctx.send(
+                        f"{user.mention}, you have used up your active powerups."
+                    )
 
-        await ctx.send(f"{ctx.author.mention} wants to fight {user.mention}. Let's see how this goes...")
+        await ctx.send(
+            f"{ctx.author.mention} wants to fight {user.mention}. Let's see how this goes..."
+        )
 
         while True:
             # Player 2 turn
@@ -169,9 +190,15 @@ class Fun(commands.Cog):
 
             try:
                 while not p2_resp_valid:
-                    await ctx.send(f"{user.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
+                    await ctx.send(
+                        f"{user.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`"
+                    )
 
-                    p2_response = (await self.bot.wait_for("message", check=check_p2, timeout=30)).content
+                    p2_response = (
+                        await self.bot.wait_for(
+                            "message", check=check_p2, timeout=30
+                        )
+                    ).content
 
                     if p2_response == "punch":
                         damage = random.randint(10, 45)
@@ -184,17 +211,23 @@ class Fun(commands.Cog):
                         p1_health -= damage
                         p2_resp_valid = True
 
-                        await ctx.send(f"**{p2_name}** bazooka punched **{p1_name}** and did **{damage}** damage! wHoOaA...")
+                        await ctx.send(
+                            f"**{p2_name}** bazooka punched **{p1_name}** and did **{damage}** damage! wHoOaA..."
+                        )
 
                     elif p2_response == "defend":
                         heal = random.randint(5, 30)
                         p2_health += heal
                         p2_resp_valid = True
 
-                        await ctx.send(f"**{p2_name}** defended and regained **{heal}** health! Proteccshun...")
+                        await ctx.send(
+                            f"**{p2_name}** defended and regained **{heal}** health! Proteccshun..."
+                        )
 
                     elif p2_response == "end":
-                        await ctx.send(f"**{p2_name}** chickened out, spam noob in the chat!")
+                        await ctx.send(
+                            f"**{p2_name}** chickened out, spam noob in the chat!"
+                        )
                         await end()
                         return
 
@@ -202,7 +235,9 @@ class Fun(commands.Cog):
                         await ctx.send("Invalid response!")
 
             except asyncio.TimeoutError:
-                await ctx.send(f"**{p2_name}** didn't respond in time what a noob...")
+                await ctx.send(
+                    f"**{p2_name}** didn't respond in time what a noob..."
+                )
                 await end()
                 return
 
@@ -211,16 +246,24 @@ class Fun(commands.Cog):
                 await end()
                 return
             else:
-                await ctx.send(f"**{p1_name}** is now left with **{p1_health}** health.")
+                await ctx.send(
+                    f"**{p1_name}** is now left with **{p1_health}** health."
+                )
 
             # Player 1 turn
             p1_resp_valid = False
 
             try:
                 while not p1_resp_valid:
-                    await ctx.send(f"{ctx.author.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`")
+                    await ctx.send(
+                        f"{ctx.author.mention}, it's your turn! What will you do?\n`punch`, `defend`, `end`"
+                    )
 
-                    p1_response = (await self.bot.wait_for("message", check=check_p1, timeout=30)).content
+                    p1_response = (
+                        await self.bot.wait_for(
+                            "message", check=check_p1, timeout=30
+                        )
+                    ).content
 
                     if p1_response == "punch":
                         damage = random.randint(10, 45)
@@ -233,17 +276,23 @@ class Fun(commands.Cog):
                         p2_health -= damage
                         p1_resp_valid = True
 
-                        await ctx.send(f"**{p1_name}** bazooka punched **{p2_name}** and did **{damage}** damage! wHoOaA...")
+                        await ctx.send(
+                            f"**{p1_name}** bazooka punched **{p2_name}** and did **{damage}** damage! wHoOaA..."
+                        )
 
                     elif p1_response == "defend":
                         heal = random.randint(5, 30)
                         p1_health += heal
                         p1_resp_valid = True
 
-                        await ctx.send(f"**{p1_name}** defended and regained **{heal}** health! Proteccshun...")
+                        await ctx.send(
+                            f"**{p1_name}** defended and regained **{heal}** health! Proteccshun..."
+                        )
 
                     elif p1_response == "end":
-                        await ctx.send(f"**{p1_name}** chickened out, spam noob in the chat!")
+                        await ctx.send(
+                            f"**{p1_name}** chickened out, spam noob in the chat!"
+                        )
                         await end()
                         return
 
@@ -251,7 +300,9 @@ class Fun(commands.Cog):
                         await ctx.send("Invalid response!")
 
             except asyncio.TimeoutError:
-                await ctx.send(f"**{p1_name}** didn't respond in time what a noob...")
+                await ctx.send(
+                    f"**{p1_name}** didn't respond in time what a noob..."
+                )
                 await end()
                 return
 
@@ -260,53 +311,85 @@ class Fun(commands.Cog):
                 await end()
                 return
             else:
-                await ctx.send(f"**{p2_name}** is now left with **{p2_health}** health.")
+                await ctx.send(
+                    f"**{p2_name}** is now left with **{p2_health}** health."
+                )
 
-    @commands.command(name="powerups", aliases=["power", "pu"], help="See your currently active powerups")
+    @commands.command(
+        name="powerups",
+        aliases=["power", "pu"],
+        help="See your currently active powerups",
+    )
     async def powerups(self, ctx):
         Data.check_user_entry(ctx.author)
 
-        Data.c.execute("SELECT powerups FROM users WHERE id = :user_id", {"user_id": ctx.author.id})
+        Data.c.execute(
+            "SELECT powerups FROM users WHERE id = :user_id",
+            {"user_id": ctx.author.id},
+        )
         powerups = json.loads(Data.c.fetchone()[0])
-        powerups_embed = discord.Embed(title=f"{ctx.author.display_name}'s Active Powerups", color=self.theme_color)
+        powerups_embed = discord.Embed(
+            title=f"{ctx.author.display_name}'s Active Powerups",
+            color=self.theme_color,
+        )
 
         for powerup in powerups:
             powerup_name = " ".join(powerup.split("_")).title()
-            powerups_embed.add_field(name=powerup_name, value=powerups[powerup])
+            powerups_embed.add_field(
+                name=powerup_name, value=powerups[powerup]
+            )
 
         await ctx.send(embed=powerups_embed)
 
-    @commands.command(name="pray", help="Pray to the Bean Gods by reciting the Beanlations")
+    @commands.command(
+        name="pray", help="Pray to the Bean Gods by reciting the Beanlations"
+    )
     async def pray(self, ctx, *, prayer=None):
         if prayer is None:
             prayer = random.choice(self.beanlations)
 
-        await ctx.send(f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*")
+        await ctx.send(
+            f"**{ctx.author.display_name}** recites a prayer:\n*{prayer}*"
+        )
 
-    @commands.command(name="snipe", aliases=["sn"], help="See a recently deleted message")
+    @commands.command(
+        name="snipe", aliases=["sn"], help="See a recently deleted message"
+    )
     async def snipe(self, ctx, limit: int = 1):
         if limit > self.snipe_limit:
             await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
             return
 
         msgs = self.deleted_msgs[str(ctx.channel.id)][::-1][:limit]
-        snipe_embed = discord.Embed(title="Message Snipe", color=self.theme_color)
+        snipe_embed = discord.Embed(
+            title="Message Snipe", color=self.theme_color
+        )
 
         for msg in msgs:
-            snipe_embed.add_field(name=msg.author.display_name, value=msg.content, inline=False)
+            snipe_embed.add_field(
+                name=msg.author.display_name, value=msg.content, inline=False
+            )
 
         await ctx.send(embed=snipe_embed)
 
-    @commands.command(name="editsnipe", aliases=["esn"], help="See a recently edited message")
+    @commands.command(
+        name="editsnipe", aliases=["esn"], help="See a recently edited message"
+    )
     async def editsnipe(self, ctx, limit: int = 1):
         if limit > self.snipe_limit:
             await ctx.send(f"Maximum snipe limit is {self.snipe_limit}")
             return
 
         msgs = self.edited_msgs[str(ctx.channel.id)][::-1][:limit]
-        editsnipe_embed = discord.Embed(title="Edit Snipe", color=self.theme_color)
+        editsnipe_embed = discord.Embed(
+            title="Edit Snipe", color=self.theme_color
+        )
 
         for msg in msgs:
-            editsnipe_embed.add_field(name=msg[0].author.display_name, value=f"{msg[0].content} **-->** {msg[1].content}", inline=False)
+            editsnipe_embed.add_field(
+                name=msg[0].author.display_name,
+                value=f"{msg[0].content} **-->** {msg[1].content}",
+                inline=False,
+            )
 
         await ctx.send(embed=editsnipe_embed)

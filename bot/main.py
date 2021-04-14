@@ -29,8 +29,14 @@ intents = discord.Intents.default()
 intents.members = True
 intents.presences = True
 
-bot = commands.Bot(PREFIX, description="Bean Bot is a fun mini-game and economy bot.", intents=intents)
-dbl_client = dbl.DBLClient(bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH)
+bot = commands.Bot(
+    PREFIX,
+    description="Bean Bot is a fun mini-game and economy bot.",
+    intents=intents,
+)
+dbl_client = dbl.DBLClient(
+    bot, DBL_TOKEN, webhook_port=8000, webhook_auth=DBL_AUTH
+)
 presence_task = None
 running = True
 
@@ -48,7 +54,7 @@ bot.add_cog(Owner(bot, THEME))
 class HelpCommand(commands.MinimalHelpCommand):
     async def send_pages(self):
         destination = self.get_destination()
-        e = discord.Embed(color=THEME, description='')
+        e = discord.Embed(color=THEME, description="")
         for page in self.paginator.pages:
             e.description += page
         await destination.send(embed=e)
@@ -59,7 +65,9 @@ bot.help_command = HelpCommand()
 
 async def update_presence():
     while running:
-        activity = discord.Activity(type=discord.ActivityType.playing, name="with the beans!")
+        activity = discord.Activity(
+            type=discord.ActivityType.playing, name="with the beans!"
+        )
         await bot.change_presence(activity=activity)
         await asyncio.sleep(5)
 
@@ -67,30 +75,48 @@ async def update_presence():
             break
 
         server_count = len(bot.guilds)
-        activity = discord.Activity(type=discord.ActivityType.watching, name=f"{server_count} servers")
+        activity = discord.Activity(
+            type=discord.ActivityType.watching, name=f"{server_count} servers"
+        )
         await bot.change_presence(activity=activity)
         await asyncio.sleep(5)
 
         if not running:
             break
 
-        activity = discord.Activity(type=discord.ActivityType.watching, name=f"{PREFIX}help")
+        activity = discord.Activity(
+            type=discord.ActivityType.watching, name=f"{PREFIX}help"
+        )
         await bot.change_presence(activity=activity)
         await asyncio.sleep(5)
 
 
 @bot.command(name="invite", help="Get the link to invite me to another server")
 async def invite(ctx):
-    invite_embed = discord.Embed(title="Bean Bot Invite Link", color=THEME, url="https://discord.com/api/oauth2/authorize?client_id=804243703455547462&permissions=537259088&scope=bot")
-    invite_embed.add_field(name="Thank you for spreading word about Bean Bot!", value=":D")
+    invite_embed = discord.Embed(
+        title="Bean Bot Invite Link",
+        color=THEME,
+        url="https://discord.com/api/oauth2/authorize?client_id=804243703455547462&permissions=537259088&scope=bot",
+    )
+    invite_embed.add_field(
+        name="Thank you for spreading word about Bean Bot!", value=":D"
+    )
 
     await ctx.send(embed=invite_embed)
+
+
+@bot.command(name="support", help="Get the invite link for the support server")
+async def support(ctx):
+    support_invite = "https://discord.gg/v7aVf4HF3v"
+    await ctx.send(support_invite)
 
 
 @bot.event
 async def on_command_error(ctx, exception):
     if isinstance(exception, commands.CommandOnCooldown):
-        await ctx.send(f"Chill out bean bro, try again in {exception.retry_after} seconds...")
+        await ctx.send(
+            f"Chill out bean bro, try again in {exception.retry_after} seconds..."
+        )
 
     elif isinstance(exception, commands.errors.MissingRequiredArgument):
         await ctx.send(f"`{exception.param.name}` is a required input.")
@@ -112,7 +138,9 @@ async def on_command_error(ctx, exception):
             await ctx.send("That's not a real command...")
 
     elif isinstance(exception, commands.MissingPermissions):
-        await ctx.send("You don't have permission to run this command. You need the following permissions:")
+        await ctx.send(
+            "You don't have permission to run this command. You need the following permissions:"
+        )
 
         for missing_perm in exception.missing_perms:
             await ctx.send(missing_perm)
@@ -146,7 +174,9 @@ async def on_guild_join(guild):
     else:
         await guild_owner.add_roles(tester_role)
 
-    await log_channel.send(f"Bean Bot joined server: **{guild.name}**\nOwner: **{guild_owner}**")
+    await log_channel.send(
+        f"Bean Bot joined server: **{guild.name}**\nOwner: **{guild_owner}**"
+    )
 
 
 @bot.event
@@ -166,7 +196,9 @@ async def on_guild_remove(guild):
     else:
         await guild_owner.remove_roles(tester_role)
 
-    await log_channel.send(f"Bean Bot left server: **{guild.name}**\nOwner: **{guild_owner}**")
+    await log_channel.send(
+        f"Bean Bot left server: **{guild.name}**\nOwner: **{guild_owner}**"
+    )
 
 
 if __name__ == "__main__":
