@@ -69,7 +69,7 @@ async def update_presence():
             type=discord.ActivityType.playing, name="with the beans!"
         )
         await bot.change_presence(activity=activity)
-        await asyncio.sleep(5)
+        await asyncio.sleep(40)
 
         if not running:
             break
@@ -79,7 +79,7 @@ async def update_presence():
             type=discord.ActivityType.watching, name=f"{server_count} servers"
         )
         await bot.change_presence(activity=activity)
-        await asyncio.sleep(5)
+        await asyncio.sleep(40)
 
         if not running:
             break
@@ -88,7 +88,7 @@ async def update_presence():
             type=discord.ActivityType.watching, name=f"{PREFIX}help"
         )
         await bot.change_presence(activity=activity)
-        await asyncio.sleep(5)
+        await asyncio.sleep(40)
 
 
 @bot.command(name="invite", help="Get the link to invite me to another server")
