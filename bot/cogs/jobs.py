@@ -4,7 +4,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from data import Data
+from bot.data import Data
 
 
 class Jobs(commands.Cog):

@@ -7,17 +7,17 @@ from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 
-from data import Data
+from bot.data import Data
 
-from cogs.currency import Currency
-from cogs.jobs import Jobs
-from cogs.shop import Shop
-from cogs.fun import Fun
-from cogs.image import Image
-from cogs.words import Words
-from cogs.reddit import Reddit
-from cogs.vote import Vote
-from cogs.owner import Owner
+from bot.cogs.currency import Currency
+from bot.cogs.jobs import Jobs
+from bot.cogs.shop import Shop
+from bot.cogs.fun import Fun
+from bot.cogs.image import Image
+from bot.cogs.words import Words
+from bot.cogs.reddit import Reddit
+from bot.cogs.vote import Vote
+from bot.cogs.owner import Owner
 
 load_dotenv()
 
@@ -204,7 +204,7 @@ async def on_guild_remove(guild):
     )
 
 
-if __name__ == "__main__":
+def main():
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(bot.start(TOKEN))
