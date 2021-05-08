@@ -3,6 +3,7 @@ import time
 import random
 import asyncio
 import dbl
+from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 
@@ -17,6 +18,8 @@ from cogs.words import Words
 from cogs.reddit import Reddit
 from cogs.vote import Vote
 from cogs.owner import Owner
+
+load_dotenv()
 
 TOKEN = os.getenv("BEAN_TOKEN")
 DBL_TOKEN = os.getenv("BEAN_DBL_TOKEN")
