@@ -38,7 +38,7 @@ bot = commands.Bot(
     intents=intents,
 )
 dbl_client = dbl.DBLClient(
-    bot, DBL_TOKEN, webhook_port=7000, webhook_auth=DBL_AUTH
+    bot, DBL_TOKEN, webhook_port=5709, webhook_auth=DBL_AUTH
 )
 presence_task = None
 running = True
